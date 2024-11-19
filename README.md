@@ -8,6 +8,11 @@ Selection) like iM.Tech CSE, M.Tech ECE etc. On the basis of the above selection
 Modify all details of the student including roll number, photograph(do not save as blob) and
 domain (Drop Down Selection), accordingly update all referenced tables.
 
+## Features
+
+- Unique roll number based on domain
+- Unique, simple email
+
 ---
 
 ### Instructions
@@ -41,6 +46,7 @@ domain (Drop Down Selection), accordingly update all referenced tables.
 CREATE TABLE domain (
     domain_id INT PRIMARY KEY,
     program VARCHAR(50),
+    code VARCHAR(20) NOT NULL,
     batch INT,
     capacity INT,
     qualification VARCHAR(50)
@@ -85,10 +91,12 @@ CREATE TABLE Student (
 
 ```mysql
 INSERT INTO domain VALUES
-(1, "M. Tech CSE", 2024, 150, "GATE CSE"),
-(2, "M. Tech ECE", 2024, 40, "GATE ECE"),
-(3, "I. M. Tech CSE", 2024, 60, "JEE ADV"),
-(4, "I. M. Tech ECE", 2024, 40, "JEE ADV");
+(1, "M. Tech. CSE", "MT", 2024, 150, "GATE CSE"),
+(2, "M. Tech. ECE", "MT", 2024, 40, "GATE ECE"),
+(3, "I. M. Tech CSE", "iMT", 2024, 60, "JEE ADV"),
+(4, "I. M. Tech ECE", "iMT", 2024, 40, "JEE ADV"),
+(5, "M. S. CSE", "MS", 2024, 15, "GATE CSE"),
+(6, "M. S. ECE", "MS", 2024, 10, "GATE ECE");
 
 INSERT INTO specialization VALUES
 (1, "AIM", "Artificial Intelligence and Machine Learning", "", 2024, 70),
@@ -103,7 +111,9 @@ INSERT INTO placement VALUES
 (2, "Cerebras", "Data Scientist", "LORA LLM Research", 2, 3.4),
 (3, "Media.net", "SDE 1", "Full-stack Development", 4, 3.0),
 (4, "Ring Central", "SDE 1", "Backend Development", 3, 3.2),
-(5, "Google", "ML Engineer", "Machine Learning Research", 2, 3.2);
+(5, "Google", "ML Engineer", "Machine Learning Research", 2, 3.2),
+(6, "Cisco", "VLSI Design Engineer", "VLSI Design", 3, 3.0),
+(7, "Qualcomm", "Systems Software Engineer", "Systems Software Development", 5, 3.3);
 
 SELECT * FROM domain;
 SELECT * FROM specialization;
