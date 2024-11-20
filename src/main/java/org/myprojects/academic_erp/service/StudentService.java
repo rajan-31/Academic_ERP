@@ -1,6 +1,8 @@
 package org.myprojects.academic_erp.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.myprojects.academic_erp.dto.StudentAdmissionRequest;
 import org.myprojects.academic_erp.dto.StudentAdmissionResponse;
 import org.myprojects.academic_erp.dto.StudentModificationRequest;
@@ -34,6 +36,8 @@ public class StudentService {
 
     private final StudentMapper studentMapper;
     private final FileUploadHelper fileUploadHelper;
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     // ======================================================
 
@@ -196,10 +200,17 @@ public class StudentService {
     // ======================================================
 
     public String deleteStudent(Long studentId) {
-        studentRepo.deleteById(studentId);
-
         // we will also delete email from email service provider
+
         // delete photo
+        String photographPath = studentRepo.findById(studentId).orElseThrow(
+                () -> new StudentNotFoundException(format("Student with id %s not found", studentId))
+        ).getPhotographPath();
+        if(!fileUploadHelper.deletePhotograph(photographPath)) {
+            LOGGER.error("Failed to delete photograph");
+        }
+
+        studentRepo.deleteById(studentId);
 
         return "Student deleted successfully";
     }

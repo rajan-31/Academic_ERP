@@ -20,7 +20,11 @@ public class FileUploadHelper {
                     throw new IOException("Unable to create directory");
             }
 
-            String fileExtension = Objects.requireNonNull(photograph.getOriginalFilename()).substring(photograph.getOriginalFilename().lastIndexOf("."));
+            String fileExtension = Objects.requireNonNull(
+                    photograph.getOriginalFilename())
+                    .substring(photograph.getOriginalFilename()
+                            .lastIndexOf(".")
+                    );
             String relativeFilePath = IMAGE_UPLOAD_PATH + rollNumber + fileExtension;
 
             String absoluteFilePath = UPLOAD_DIR + relativeFilePath;
@@ -30,5 +34,13 @@ public class FileUploadHelper {
         } catch (IOException e) {
             throw new RuntimeException("Error saving photograph: " + e.getMessage(), e);
         }
+    }
+
+    public boolean deletePhotograph(String photographPath) {
+        File file = new File(UPLOAD_DIR + photographPath);
+        if (file.exists()) {
+            return file.delete();
+        }
+        return false;
     }
 }
