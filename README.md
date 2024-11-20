@@ -9,9 +9,12 @@ Modify all details of the student including roll number, photograph(do not save 
 domain (Drop Down Selection), accordingly update all referenced tables.
 
 ## Features
-
 - Unique roll number based on domain
 - Unique, simple email
+- JWT Auth
+
+## To Do
+- Delete photo
 
 ---
 

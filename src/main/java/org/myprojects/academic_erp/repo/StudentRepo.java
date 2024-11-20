@@ -14,6 +14,8 @@ public interface StudentRepo extends JpaRepository<Student, Long> {
 
     Long countByDomain(Domain domain);
 
+    Student findFirstByDomainOrderByRollNumberDesc(Domain domain);
+
     // Count students with same domain code
 //    @Query("SELECT COUNT(s) FROM Student s WHERE s.domain.code = :code")
 //    Long countByDomainCode(@Param("code") String code);

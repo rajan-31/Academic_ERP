@@ -13,10 +13,7 @@ import org.myprojects.academic_erp.exception.StudentDataInvalidException;
 import org.myprojects.academic_erp.exception.StudentNotFoundException;
 import org.myprojects.academic_erp.helper.FileUploadHelper;
 import org.myprojects.academic_erp.mapper.StudentMapper;
-import org.myprojects.academic_erp.repo.DomainRepo;
-import org.myprojects.academic_erp.repo.PlacementRepo;
-import org.myprojects.academic_erp.repo.SpecializationRepo;
-import org.myprojects.academic_erp.repo.StudentRepo;
+import org.myprojects.academic_erp.repo.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,7 +59,6 @@ public class StudentService {
 
         // Student with same domain
         Long count = studentRepo.countByDomain(domain);
-
         // Domains with same code
         List<Domain> domainsWithSameCode = domainRepo.getDomainByCode(domainCode);
         int idx = IntStream.range(0, domainsWithSameCode.size())
@@ -71,13 +67,26 @@ public class StudentService {
                 )
                 .findFirst()
                 .orElse(10);
+        long nextCountInDomain = idx * 200L + count + 1;
+
+        // ======================================================
+
+        Student lastStudentInDomain = studentRepo.findFirstByDomainOrderByRollNumberDesc(domain);
+        if(lastStudentInDomain != null) {
+            nextCountInDomain = Long.parseLong(
+                    lastStudentInDomain.getRollNumber()
+                            .replace(domainCode+batch, "")
+            ) + 1;
+        }
+
+        // ======================================================
 
         // like IIITB has MTech CSE => MT2024001 to 200,
         //                MTech ECE => MT2024201 to 400
         //               iMTech CSE =>iMT2024001 to 200
         //               iMTech ECE =>iMT2024201 to 400
 
-        return domainCode + batch + format("%03d", idx * 200L + count + 1);
+        return domainCode + batch + format("%03d", nextCountInDomain);
     }
 
     private String generateUniqueEmail(String firstName, String lastName) {
@@ -162,7 +171,6 @@ public class StudentService {
 
         Student modifiedStudent = studentMapper.studentModificationRequestToStudent(
                 request, existingStudent, domain, specialization, placement
-
         );
 
         if(request.rollNumberModify() != null && request.rollNumberModify()) {
@@ -189,6 +197,10 @@ public class StudentService {
 
     public String deleteStudent(Long studentId) {
         studentRepo.deleteById(studentId);
+
+        // we will also delete email from email service provider
+        // delete photo
+
         return "Student deleted successfully";
     }
 }
