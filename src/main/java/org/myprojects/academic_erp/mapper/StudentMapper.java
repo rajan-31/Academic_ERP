@@ -41,8 +41,8 @@ public class StudentMapper {
 
     public Student studentAdmissionRequestToStudent(StudentAdmissionRequest request, Domain domain) {
         return Student.builder()
-                .firstName(request.firstName())
-                .lastName(request.lastName())
+                .firstName(request.firstName().trim().toLowerCase())
+                .lastName(request.lastName().trim().toLowerCase())
                 .domain(domain)
                 .build();
     }
@@ -71,8 +71,8 @@ public class StudentMapper {
         return Student.builder()
                 .studentId(existingStudent.getStudentId()) // Preserve existing ID
                 .rollNumber(existingStudent.getRollNumber())
-                .firstName(request.firstName() != null ? request.firstName() : existingStudent.getFirstName())
-                .lastName(request.lastName() != null ? request.lastName() : existingStudent.getLastName())
+                .firstName(request.firstName() != null ? request.firstName().trim().toLowerCase() : existingStudent.getFirstName())
+                .lastName(request.lastName() != null ? request.lastName().trim().toLowerCase() : existingStudent.getLastName())
                 .email(existingStudent.getEmail())
                 .photographPath(existingStudent.getPhotographPath()) // Preserve photographPath
                 .cgpa(request.cgpa() != null ? request.cgpa() : existingStudent.getCgpa())
