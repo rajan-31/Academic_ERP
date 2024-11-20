@@ -1,5 +1,7 @@
 package org.myprojects.academic_erp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,15 +44,15 @@ public class Student {
     @Column(name = "graduation_year")
     private Integer graduationYear;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "domain", referencedColumnName = "domain_id", foreignKey = @ForeignKey(name = "FK_Student_Domain"))
     private Domain domain;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "specialization", referencedColumnName = "specialization_id", foreignKey = @ForeignKey(name = "FK_Student_Specialization"))
     private Specialization specialization;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "placement", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_Student_Placement"))
     private Placement placement;
 }

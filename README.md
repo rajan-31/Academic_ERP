@@ -93,8 +93,8 @@ CREATE TABLE Student (
 INSERT INTO domain VALUES
 (1, "M. Tech. CSE", "MT", 2024, 150, "GATE CSE"),
 (2, "M. Tech. ECE", "MT", 2024, 40, "GATE ECE"),
-(3, "I. M. Tech CSE", "iMT", 2024, 60, "JEE ADV"),
-(4, "I. M. Tech ECE", "iMT", 2024, 40, "JEE ADV"),
+(3, "I. M. Tech. CSE", "IMT", 2024, 60, "JEE ADV"),
+(4, "I. M. Tech. ECE", "IMT", 2024, 40, "JEE ADV"),
 (5, "M. S. CSE", "MS", 2024, 15, "GATE CSE"),
 (6, "M. S. ECE", "MS", 2024, 10, "GATE ECE");
 

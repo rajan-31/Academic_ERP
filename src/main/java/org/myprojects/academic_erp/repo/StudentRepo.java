@@ -11,6 +11,7 @@ import java.util.List;
 
 @Repository
 public interface StudentRepo extends JpaRepository<Student, Long> {
+
     Long countByDomain(Domain domain);
 
     // Count students with same domain code

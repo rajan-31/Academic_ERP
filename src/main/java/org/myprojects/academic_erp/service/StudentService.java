@@ -3,8 +3,14 @@ package org.myprojects.academic_erp.service;
 import lombok.RequiredArgsConstructor;
 import org.myprojects.academic_erp.dto.StudentAdmissionRequest;
 import org.myprojects.academic_erp.dto.StudentAdmissionResponse;
+import org.myprojects.academic_erp.dto.StudentModificationRequest;
+import org.myprojects.academic_erp.dto.StudentResponse;
 import org.myprojects.academic_erp.entity.Domain;
+import org.myprojects.academic_erp.entity.Placement;
+import org.myprojects.academic_erp.entity.Specialization;
 import org.myprojects.academic_erp.entity.Student;
+import org.myprojects.academic_erp.exception.StudentDataInvalidException;
+import org.myprojects.academic_erp.exception.StudentNotFoundException;
 import org.myprojects.academic_erp.helper.FileUploadHelper;
 import org.myprojects.academic_erp.mapper.StudentMapper;
 import org.myprojects.academic_erp.repo.DomainRepo;
@@ -32,6 +38,24 @@ public class StudentService {
     private final StudentMapper studentMapper;
     private final FileUploadHelper fileUploadHelper;
 
+    // ======================================================
+
+    public List<StudentResponse> getStudents() {
+        return studentMapper.toStudentResponseList(studentRepo.findAll());
+    }
+
+    // ======================================================
+
+    public StudentResponse getStudent(Long studentId) {
+        return studentMapper.toStudentResponse(studentRepo.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException(
+                        format("Student with id %s not found", studentId)
+                ))
+        );
+    }
+
+    // ======================================================
+
     private String generateRollNumber(Domain domain) {
         String domainCode = domain.getCode();
         Integer batch = domain.getBatch();
@@ -55,7 +79,6 @@ public class StudentService {
 
         return domainCode + batch + format("%03d", idx * 200L + count + 1);
     }
-
 
     private String generateUniqueEmail(String firstName, String lastName) {
         String baseEmail = lastName + "." + firstName;
@@ -107,10 +130,65 @@ public class StudentService {
         student.setEmail(email);
 
         // Save photograph to file system and get path
-        String photographPath = fileUploadHelper.savePhotograph(photograph, rollNumber);
-        student.setPhotographPath(photographPath);
+        if(photograph != null && !photograph.isEmpty()) {
+            String photographPath = fileUploadHelper.savePhotograph(photograph, rollNumber);
+            student.setPhotographPath(photographPath);
+        }
 
         studentRepo.save(student);
         return studentMapper.toStudentAdmissionResponse(student);
+    }
+
+    // ======================================================
+
+    public String updateStudent(StudentModificationRequest request, MultipartFile photograph, Long studentId) {
+        Student existingStudent = studentRepo.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException(
+                        format("Student %s not found", studentId)
+                ));
+
+        Domain domain = request.domain() != null ?
+                domainRepo.findById(request.domain())
+                        .orElseThrow(() -> new StudentDataInvalidException("Invalid domain"))
+                : existingStudent.getDomain();
+        Specialization specialization = request.specialization() != null ?
+                specializationRepo.findById(request.specialization())
+                        .orElseThrow(() -> new StudentDataInvalidException("Invalid specialization"))
+                : existingStudent.getSpecialization();
+        Placement placement = request.placement() != null ?
+                placementRepo.findById(request.placement())
+                        .orElseThrow(() -> new StudentDataInvalidException("Invalid placement"))
+                : existingStudent.getPlacement();
+
+        Student modifiedStudent = studentMapper.studentModificationRequestToStudent(
+                request, existingStudent, domain, specialization, placement
+
+        );
+
+        if(request.rollNumberModify() != null && request.rollNumberModify()) {
+            modifiedStudent.setRollNumber(generateRollNumber(domain));
+        }
+        if(photograph != null && !photograph.isEmpty()) {
+            String photographPath = fileUploadHelper.savePhotograph(photograph, modifiedStudent.getRollNumber());
+            modifiedStudent.setPhotographPath(photographPath);
+        }
+        if(
+                (request.firstName() != null && !request.firstName().isEmpty()) ||
+                (request.lastName() != null &&  !request.lastName().isEmpty()) ||
+                (request.emailModify() != null && request.emailModify())
+        ) {
+            modifiedStudent.setEmail(generateUniqueEmail(modifiedStudent.getFirstName(), modifiedStudent.getLastName()));
+        }
+
+        studentRepo.save(modifiedStudent);
+
+        return "Student updated successfully";
+    }
+
+    // ======================================================
+
+    public String deleteStudent(Long studentId) {
+        studentRepo.deleteById(studentId);
+        return "Student deleted successfully";
     }
 }
