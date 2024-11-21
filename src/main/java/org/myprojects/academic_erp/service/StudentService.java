@@ -8,6 +8,7 @@ import org.myprojects.academic_erp.dto.StudentAdmissionResponse;
 import org.myprojects.academic_erp.dto.StudentModificationRequest;
 import org.myprojects.academic_erp.dto.StudentResponse;
 import org.myprojects.academic_erp.entity.*;
+import org.myprojects.academic_erp.exception.AccessDeniedException;
 import org.myprojects.academic_erp.exception.StudentDataInvalidException;
 import org.myprojects.academic_erp.exception.StudentNotFoundException;
 import org.myprojects.academic_erp.helper.EncryptionService;
@@ -159,11 +160,18 @@ public class StudentService {
 
     // ======================================================
 
-    public String updateStudent(StudentModificationRequest request, MultipartFile photograph, Long studentId) {
+    public String updateStudent(
+            StudentModificationRequest request, MultipartFile photograph,
+            Long studentId, String loggedInUserType, String loggedInEmail
+    ) {
         Student existingStudent = studentRepo.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(
                         format("Student %s not found", studentId)
                 ));
+
+        if(!loggedInUserType.equals("employee") && !loggedInEmail.equals(existingStudent.getEmail())) {
+            throw new AccessDeniedException("Unauthorized user");
+        }
 
         Domain domain = request.domain() != null ?
                 domainRepo.findById(request.domain())
@@ -211,12 +219,19 @@ public class StudentService {
 
     // ======================================================
 
-    public String deleteStudent(Long studentId) {
+    public String deleteStudent(
+            Long studentId, String
+            loggedInUserType, String loggedInEmail
+    ) {
         // we will also delete email from email service provider
 
         Student student =  studentRepo.findById(studentId).orElseThrow(
                 () -> new StudentNotFoundException(format("Student with id %s not found", studentId))
         );
+
+        if(!loggedInUserType.equals("employee") && !loggedInEmail.equals(student.getEmail())) {
+            throw new AccessDeniedException("Unauthorized user");
+        }
 
         // delete photo
         String photographPath = student.getPhotographPath();

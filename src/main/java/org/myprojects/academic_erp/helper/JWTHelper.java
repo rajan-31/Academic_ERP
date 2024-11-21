@@ -65,6 +65,10 @@ public class JWTHelper {
         return !extractExpiration(token).before(new Date());
     }
 
+    public String authHeaderToToken(String authHeader) {
+        return authHeader.substring(7);
+    }
+
     public Boolean validateAuthorizationHeader(String authorizationHeader, List<String> allowedUserTypes) {
         if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return false;

@@ -35,7 +35,14 @@ public class StudentController {
     }
 
     @GetMapping("/{student_id}")
-    public ResponseEntity<StudentResponse> getStudent(@PathVariable("student_id") Long studentId) {
+    public ResponseEntity<StudentResponse> getStudent(
+            @RequestHeader(value = "Authorization") String authHeader,
+            @PathVariable("student_id") Long studentId
+    ) {
+        if(!jwtHelper.validateAuthorizationHeader(authHeader, List.of("student", "employee"))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(studentService.getStudent(studentId));
     }
 
@@ -54,20 +61,37 @@ public class StudentController {
 
     @PutMapping(path = "/{student_id}", consumes = "multipart/form-data")
     public ResponseEntity<String> updateStudent(
+            @RequestHeader(value = "Authorization") String authHeader,
             @PathVariable("student_id") Long studentId,
             @RequestPart(name = "data", required = false) @Valid StudentModificationRequest request,
-            @RequestPart(name = "photograph", required = false) MultipartFile photograph,
-            @RequestHeader(value = "Authorization") String authHeader
+            @RequestPart(name = "photograph", required = false) MultipartFile photograph
     ) {
         if(!jwtHelper.validateAuthorizationHeader(authHeader, List.of("student", "employee"))) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(studentService.updateStudent(request, photograph, studentId));
+        String token = jwtHelper.authHeaderToToken(authHeader);
+
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.updateStudent(
+                request, photograph, studentId,
+                jwtHelper.extractUserType(token), jwtHelper.extractEmail(token))
+        );
     }
 
     @DeleteMapping("/{student_id}")
-    public ResponseEntity<String> deleteStudent(@PathVariable("student_id") Long studentId) {
-        return ResponseEntity.status(HttpStatus.OK).body(studentService.deleteStudent(studentId));
+    public ResponseEntity<String> deleteStudent(
+            @RequestHeader(value = "Authorization") String authHeader,
+            @PathVariable("student_id") Long studentId
+    ) {
+        if(!jwtHelper.validateAuthorizationHeader(authHeader, List.of("student", "employee"))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String token = jwtHelper.authHeaderToToken(authHeader);
+
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.deleteStudent(
+                studentId,
+                jwtHelper.extractUserType(token), jwtHelper.extractEmail(token))
+        );
     }
 }
