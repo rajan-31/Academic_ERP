@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -64,16 +65,16 @@ public class JWTHelper {
         return !extractExpiration(token).before(new Date());
     }
 
-    public Boolean validateAuthorizationHeader(String authorizationHeader) {
+    public Boolean validateAuthorizationHeader(String authorizationHeader, List<String> allowedUserTypes) {
         if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return false;
         }
 
         String token = authorizationHeader.substring(7);
         String email = extractEmail(token);
-        String type = extractUserType(token);
+        String userType = extractUserType(token);
 
-        return email != null && type != null && validateToken(token);
+        return email != null && userType != null && allowedUserTypes.contains(userType) && validateToken(token);
     }
 
 }

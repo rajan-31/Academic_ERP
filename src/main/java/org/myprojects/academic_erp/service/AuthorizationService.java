@@ -38,7 +38,7 @@ public class AuthorizationService {
     }
 
     public String loginUser(LoginRequest request) {
-        UserCredentials userCredentials = getUserCredentials(request.email());
+        UserCredentials userCredentials = getUserCredentials(request.email().toLowerCase());
 
         if(!encryptionService.validatePassword(request.password(), userCredentials.getPasswordEncoded())) {
             return "Incorrect email or password";

@@ -9,12 +9,17 @@ Modify all details of the student including roll number, photograph(do not save 
 domain (Drop Down Selection), accordingly update all referenced tables.
 
 ## Features
+- Logging
 - Unique roll number based on domain
 - Unique, simple email
 - JWT Auth
 
 ## To Do
-- Delete photo
+- Secure routes
+
+## Production: To Do
+- Change generateSecurePassword() methods default password, and change password length
+- Change min, max password length in UserCredentials entity
 
 ---
 

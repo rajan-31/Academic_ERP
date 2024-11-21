@@ -4,10 +4,7 @@ import org.myprojects.academic_erp.dto.StudentAdmissionRequest;
 import org.myprojects.academic_erp.dto.StudentAdmissionResponse;
 import org.myprojects.academic_erp.dto.StudentModificationRequest;
 import org.myprojects.academic_erp.dto.StudentResponse;
-import org.myprojects.academic_erp.entity.Domain;
-import org.myprojects.academic_erp.entity.Placement;
-import org.myprojects.academic_erp.entity.Specialization;
-import org.myprojects.academic_erp.entity.Student;
+import org.myprojects.academic_erp.entity.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -81,6 +78,16 @@ public class StudentMapper {
                 .domain(domain != null ? domain : existingStudent.getDomain()) // Update if new domain provided
                 .specialization(specialization != null ? specialization : existingStudent.getSpecialization())
                 .placement(placement != null ? placement : existingStudent.getPlacement())
+                .build();
+    }
+
+    // ======================================================
+
+    public UserCredentials toUserCredentials(Student student, String encodedPassword) {
+        return UserCredentials.builder()
+                .email(student.getEmail())
+                .passwordEncoded(encodedPassword)
+                .userType("student")
                 .build();
     }
 }

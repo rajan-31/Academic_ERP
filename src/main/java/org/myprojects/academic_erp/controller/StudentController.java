@@ -6,7 +6,7 @@ import org.myprojects.academic_erp.dto.StudentAdmissionRequest;
 import org.myprojects.academic_erp.dto.StudentAdmissionResponse;
 import org.myprojects.academic_erp.dto.StudentModificationRequest;
 import org.myprojects.academic_erp.dto.StudentResponse;
-import org.myprojects.academic_erp.entity.Student;
+import org.myprojects.academic_erp.helper.JWTHelper;
 import org.myprojects.academic_erp.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +21,16 @@ import java.util.List;
 public class StudentController {
     private final StudentService studentService;
 
+    private final JWTHelper jwtHelper;
+
     @GetMapping
-    public ResponseEntity<List<StudentResponse>> getAllStudents() {
+    public ResponseEntity<List<StudentResponse>> getAllStudents(
+            @RequestHeader(value = "Authorization") String authHeader
+    ) {
+        if(!jwtHelper.validateAuthorizationHeader(authHeader, List.of("employee"))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(studentService.getStudents());
     }
 
@@ -33,9 +41,14 @@ public class StudentController {
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<StudentAdmissionResponse> addStudent(
+            @RequestHeader(value = "Authorization") String authHeader,
             @RequestPart("data") @Valid StudentAdmissionRequest request,
             @RequestPart("photograph") MultipartFile photograph
     ) {
+        if(!jwtHelper.validateAuthorizationHeader(authHeader, List.of("employee"))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(studentService.addStudent(request, photograph));
     }
 
@@ -43,8 +56,13 @@ public class StudentController {
     public ResponseEntity<String> updateStudent(
             @PathVariable("student_id") Long studentId,
             @RequestPart(name = "data", required = false) @Valid StudentModificationRequest request,
-            @RequestPart(name = "photograph", required = false) MultipartFile photograph
+            @RequestPart(name = "photograph", required = false) MultipartFile photograph,
+            @RequestHeader(value = "Authorization") String authHeader
     ) {
+        if(!jwtHelper.validateAuthorizationHeader(authHeader, List.of("student", "employee"))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(studentService.updateStudent(request, photograph, studentId));
     }
 

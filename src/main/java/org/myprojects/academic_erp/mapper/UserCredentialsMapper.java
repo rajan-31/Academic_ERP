@@ -13,7 +13,7 @@ public class UserCredentialsMapper {
 
     public UserCredentials toUserCredentials(LoginRequest request) {
         return UserCredentials.builder()
-                .email(request.email())
+                .email(request.email().toLowerCase())
                 .passwordEncoded(encryptionService.passwordEncode(request.password()))
                 .build();
     }

@@ -7,12 +7,10 @@ import org.myprojects.academic_erp.dto.StudentAdmissionRequest;
 import org.myprojects.academic_erp.dto.StudentAdmissionResponse;
 import org.myprojects.academic_erp.dto.StudentModificationRequest;
 import org.myprojects.academic_erp.dto.StudentResponse;
-import org.myprojects.academic_erp.entity.Domain;
-import org.myprojects.academic_erp.entity.Placement;
-import org.myprojects.academic_erp.entity.Specialization;
-import org.myprojects.academic_erp.entity.Student;
+import org.myprojects.academic_erp.entity.*;
 import org.myprojects.academic_erp.exception.StudentDataInvalidException;
 import org.myprojects.academic_erp.exception.StudentNotFoundException;
+import org.myprojects.academic_erp.helper.EncryptionService;
 import org.myprojects.academic_erp.helper.FileUploadHelper;
 import org.myprojects.academic_erp.mapper.StudentMapper;
 import org.myprojects.academic_erp.repo.*;
@@ -33,9 +31,12 @@ public class StudentService {
     private final DomainRepo domainRepo;
     private final SpecializationRepo specializationRepo;
     private final PlacementRepo placementRepo;
+    private final UserCredentialsRepo userCredentialsRepo;
 
     private final StudentMapper studentMapper;
     private final FileUploadHelper fileUploadHelper;
+
+    private final EncryptionService encryptionService;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -148,6 +149,10 @@ public class StudentService {
             student.setPhotographPath(photographPath);
         }
 
+        String generatedPassword = encryptionService.generateSecurePassword();
+        userCredentialsRepo.save(studentMapper.toUserCredentials(
+                student, encryptionService.passwordEncode(generatedPassword))
+        );
         studentRepo.save(student);
         return studentMapper.toStudentAdmissionResponse(student);
     }
@@ -189,7 +194,14 @@ public class StudentService {
                 (request.lastName() != null &&  !request.lastName().isEmpty()) ||
                 (request.emailModify() != null && request.emailModify())
         ) {
-            modifiedStudent.setEmail(generateUniqueEmail(modifiedStudent.getFirstName(), modifiedStudent.getLastName()));
+            String newEmail = generateUniqueEmail(modifiedStudent.getFirstName(), modifiedStudent.getLastName());
+
+            UserCredentials userCredentials = userCredentialsRepo.findByEmail(existingStudent.getEmail())
+                            .orElseThrow(() -> new StudentDataInvalidException("Invalid email"));
+            // this will update email, no need to call save()
+            userCredentials.setEmail(newEmail);
+
+            modifiedStudent.setEmail(newEmail);
         }
 
         studentRepo.save(modifiedStudent);
@@ -202,14 +214,18 @@ public class StudentService {
     public String deleteStudent(Long studentId) {
         // we will also delete email from email service provider
 
-        // delete photo
-        String photographPath = studentRepo.findById(studentId).orElseThrow(
+        Student student =  studentRepo.findById(studentId).orElseThrow(
                 () -> new StudentNotFoundException(format("Student with id %s not found", studentId))
-        ).getPhotographPath();
+        );
+
+        // delete photo
+        String photographPath = student.getPhotographPath();
         if(!fileUploadHelper.deletePhotograph(photographPath)) {
             LOGGER.error("Failed to delete photograph");
         }
 
+        String email = student.getEmail();
+        userCredentialsRepo.deleteByEmail(email);
         studentRepo.deleteById(studentId);
 
         return "Student deleted successfully";
