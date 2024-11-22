@@ -10,6 +10,7 @@ import Student from './pages/Student';
 import Employee from './pages/Employee';
 import Navbar from './components/Layout';
 import Layout from './components/Layout';
+import axios from "axios";
 
 const router = createBrowserRouter([
 	{
@@ -41,6 +42,8 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+	axios.defaults.baseURL = "http://localhost:8080/api/v1"
+
 	return (
 		<div>
 			<RouterProvider router={router} />

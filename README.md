@@ -15,11 +15,12 @@ domain (Drop Down Selection), accordingly update all referenced tables.
 - JWT Auth
 
 ## To Do
-- Secure routes
+- 
 
 ## Production: To Do
 - Change generateSecurePassword() methods default password, and change password length
 - Change min, max password length in UserCredentials entity
+- Remove CORS setting
 
 ---
 

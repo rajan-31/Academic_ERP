@@ -2,6 +2,7 @@ package org.myprojects.academic_erp.service;
 
 import lombok.RequiredArgsConstructor;
 import org.myprojects.academic_erp.dto.LoginRequest;
+import org.myprojects.academic_erp.dto.LoginResponse;
 import org.myprojects.academic_erp.entity.UserCredentials;
 import org.myprojects.academic_erp.helper.EncryptionService;
 import org.myprojects.academic_erp.helper.JWTHelper;
@@ -37,13 +38,16 @@ public class AuthorizationService {
         return "User created";
     }
 
-    public String loginUser(LoginRequest request) {
+    public LoginResponse loginUser(LoginRequest request) {
         UserCredentials userCredentials = getUserCredentials(request.email().toLowerCase());
 
         if(!encryptionService.validatePassword(request.password(), userCredentials.getPasswordEncoded())) {
-            return "Incorrect email or password";
+            throw new RuntimeException("Invalid password");
         }
 
-        return jwtHelper.generateToken(userCredentials.getEmail(), userCredentials.getUserType());
+        return userCredentialsMapper.toLoginResponse(
+                jwtHelper.generateToken(userCredentials.getEmail(), userCredentials.getUserType()),
+                userCredentials.getUserType()
+        );
     }
 }
