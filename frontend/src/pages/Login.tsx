@@ -1,12 +1,14 @@
 import axios from "axios";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../components/AuthContext";
 
 const Login = () => {
-    const [email, setEmail] = useState("doe.john@iiitb.ac.in");
-    const [password, setPassword] = useState("123456");
+    const [email, setEmail] = useState("Cavill.Henry@iiitb.ac.in");
+    const [password, setPassword] = useState("123");
 
     const navigate = useNavigate();
+    const { setLoggedInUserType } = useAuth();
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -17,16 +19,30 @@ const Login = () => {
 
             localStorage.setItem("jwtToken", data.jwtToken);
 
-            if(data.user_type === "student")
+            if(data.user_type === "student") {
+                setLoggedInUserType("student");
+                localStorage.setItem("userType", "student");
                 navigate("/student");
-            else if(data.user_type === "employee")
+            }
+            else if(data.user_type === "employee") {
+                setLoggedInUserType("employee");
+                localStorage.setItem("userType", "employee");
                 navigate("/employee");
-            else
+            }
+            else {
+                setLoggedInUserType("");
+                localStorage.setItem("userType", "");
                 alert("Failed to login!")
+            }
         } catch (error) {
             alert("Failed to login!");
         }
     }
+
+    useEffect(() => {
+        setLoggedInUserType("");
+        localStorage.setItem("userType", "");
+    }, []);
 
     return (
         <div>
