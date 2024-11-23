@@ -57,6 +57,14 @@ public class StudentService {
         );
     }
 
+    public StudentResponse getStudentByEmail(String email) {
+        return studentMapper.toStudentResponse(studentRepo.findByEmail(email)
+                .orElseThrow(() -> new StudentNotFoundException(
+                        format("Student with email %s not found", email)
+                ))
+        );
+    }
+
     // ======================================================
 
     private String generateRollNumber(Domain domain) {
@@ -160,7 +168,7 @@ public class StudentService {
 
     // ======================================================
 
-    public String updateStudent(
+    public StudentResponse updateStudent(
             StudentModificationRequest request, MultipartFile photograph,
             Long studentId, String loggedInUserType, String loggedInEmail
     ) {
@@ -173,15 +181,15 @@ public class StudentService {
             throw new AccessDeniedException("Unauthorized user");
         }
 
-        Domain domain = request.domain() != null ?
+        Domain domain = request != null && request.domain() != null ?
                 domainRepo.findById(request.domain())
                         .orElseThrow(() -> new StudentDataInvalidException("Invalid domain"))
                 : existingStudent.getDomain();
-        Specialization specialization = request.specialization() != null ?
+        Specialization specialization = request != null && request.specialization() != null ?
                 specializationRepo.findById(request.specialization())
                         .orElseThrow(() -> new StudentDataInvalidException("Invalid specialization"))
                 : existingStudent.getSpecialization();
-        Placement placement = request.placement() != null ?
+        Placement placement = request != null && request.placement() != null ?
                 placementRepo.findById(request.placement())
                         .orElseThrow(() -> new StudentDataInvalidException("Invalid placement"))
                 : existingStudent.getPlacement();
@@ -190,7 +198,7 @@ public class StudentService {
                 request, existingStudent, domain, specialization, placement
         );
 
-        if(request.rollNumberModify() != null && request.rollNumberModify()) {
+        if(request != null && request.rollNumberModify() != null && request.rollNumberModify()) {
             modifiedStudent.setRollNumber(generateRollNumber(domain));
         }
         if(photograph != null && !photograph.isEmpty()) {
@@ -198,9 +206,9 @@ public class StudentService {
             modifiedStudent.setPhotographPath(photographPath);
         }
         if(
-                (request.firstName() != null && !request.firstName().isEmpty()) ||
-                (request.lastName() != null &&  !request.lastName().isEmpty()) ||
-                (request.emailModify() != null && request.emailModify())
+//                (request != null && request.firstName() != null && !request.firstName().isEmpty()) ||
+//                (request != null && request.lastName() != null &&  !request.lastName().isEmpty()) ||
+                (request != null && request.emailModify() != null && request.emailModify())
         ) {
             String newEmail = generateUniqueEmail(modifiedStudent.getFirstName(), modifiedStudent.getLastName());
 
@@ -214,7 +222,7 @@ public class StudentService {
 
         studentRepo.save(modifiedStudent);
 
-        return "Student updated successfully";
+        return studentMapper.toStudentResponse(modifiedStudent);
     }
 
     // ======================================================

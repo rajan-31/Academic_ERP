@@ -17,6 +17,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/v1/students")
 public class StudentController {
     private final StudentService studentService;
@@ -46,11 +47,24 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.OK).body(studentService.getStudent(studentId));
     }
 
+    @GetMapping("/email")
+    public ResponseEntity<StudentResponse> getStudentByEmail(
+            @RequestHeader(value = "Authorization") String authHeader
+    ) {
+        if(!jwtHelper.validateAuthorizationHeader(authHeader, List.of("student", "employee"))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String email = jwtHelper.extractEmail(jwtHelper.authHeaderToToken(authHeader));
+
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.getStudentByEmail(email));
+    }
+
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<StudentAdmissionResponse> addStudent(
             @RequestHeader(value = "Authorization") String authHeader,
             @RequestPart("data") @Valid StudentAdmissionRequest request,
-            @RequestPart("photograph") MultipartFile photograph
+            @RequestPart(value = "photograph", required = false) MultipartFile photograph
     ) {
         if(!jwtHelper.validateAuthorizationHeader(authHeader, List.of("employee"))) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -60,7 +74,7 @@ public class StudentController {
     }
 
     @PutMapping(path = "/{student_id}", consumes = "multipart/form-data")
-    public ResponseEntity<String> updateStudent(
+    public ResponseEntity<StudentResponse> updateStudent(
             @RequestHeader(value = "Authorization") String authHeader,
             @PathVariable("student_id") Long studentId,
             @RequestPart(name = "data", required = false) @Valid StudentModificationRequest request,

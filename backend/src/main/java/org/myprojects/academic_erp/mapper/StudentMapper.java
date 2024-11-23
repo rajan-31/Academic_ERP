@@ -68,13 +68,13 @@ public class StudentMapper {
         return Student.builder()
                 .studentId(existingStudent.getStudentId()) // Preserve existing ID
                 .rollNumber(existingStudent.getRollNumber())
-                .firstName(request.firstName() != null ? request.firstName().trim().toLowerCase() : existingStudent.getFirstName())
-                .lastName(request.lastName() != null ? request.lastName().trim().toLowerCase() : existingStudent.getLastName())
+                .firstName(request != null && request.firstName() != null ? request.firstName().trim().toLowerCase() : existingStudent.getFirstName())
+                .lastName(request != null && request.lastName() != null ? request.lastName().trim().toLowerCase() : existingStudent.getLastName())
                 .email(existingStudent.getEmail())
                 .photographPath(existingStudent.getPhotographPath()) // Preserve photographPath
-                .cgpa(request.cgpa() != null ? request.cgpa() : existingStudent.getCgpa())
-                .totalCredits(request.totalCredits() != null ? request.totalCredits() : existingStudent.getTotalCredits())
-                .graduationYear(request.graduationYear() != null ? request.graduationYear() : existingStudent.getGraduationYear())
+                .cgpa(request != null && request.cgpa() != null ? request.cgpa() : existingStudent.getCgpa())
+                .totalCredits(request != null && request.totalCredits() != null ? request.totalCredits() : existingStudent.getTotalCredits())
+                .graduationYear(request != null && request.graduationYear() != null ? request.graduationYear() : existingStudent.getGraduationYear())
                 .domain(domain != null ? domain : existingStudent.getDomain()) // Update if new domain provided
                 .specialization(specialization != null ? specialization : existingStudent.getSpecialization())
                 .placement(placement != null ? placement : existingStudent.getPlacement())
