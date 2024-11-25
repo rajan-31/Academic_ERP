@@ -83,7 +83,7 @@ const Student = () => {
             }
 
             // Send the request
-            const res = await axios.put("/students" + `/${studentData.student_id}`, formData, {
+            const res = await axios.put(`/students/${studentData.student_id}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     "Authorization": "Bearer " + jwtToken
@@ -122,7 +122,7 @@ const Student = () => {
         }
 
         fetchData();
-    }, []);
+    });
 
     return (
         <div>
@@ -134,7 +134,7 @@ const Student = () => {
                         <code>{JSON.stringify(studentData, null, 4)}</code>
                     </pre>
 
-                    <img src={`http://localhost:8080${studentData.photograph_path}`} width="100" />
+                    <img src={`http://localhost:8080${studentData.photograph_path}`} width="100" alt="Profile" />
                 </div>
             }
 

@@ -42,7 +42,7 @@ const Login = () => {
     useEffect(() => {
         setLoggedInUserType("");
         localStorage.setItem("userType", "");
-    }, []);
+    });
 
     return (
         <div>

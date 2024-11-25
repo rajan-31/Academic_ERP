@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import StudentData from "../types/StudentTypes";
 
 const StudentListItem = ({studentDetails}: {studentDetails: StudentData} ) => {

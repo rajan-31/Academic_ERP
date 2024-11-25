@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import StudentData from "../types/StudentTypes";
 
 const StudentDetails = () => {
@@ -86,7 +86,7 @@ const StudentDetails = () => {
             }
 
             // Send the request
-            const res = await axios.put("/students" + `/${studentData.student_id}`, formData, {
+            const res = await axios.put(`/students/${studentData.student_id}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     "Authorization": "Bearer " + jwtToken
@@ -111,7 +111,7 @@ const StudentDetails = () => {
                         <code>{JSON.stringify(studentData, null, 4)}</code>
                     </pre>
     
-                    <img src={`http://localhost:8080${state.photograph_path}`} width="100" />
+                    <img src={`http://localhost:8080${state.photograph_path}`} width="100" alt="Profile" />
                 </div>
             }
             

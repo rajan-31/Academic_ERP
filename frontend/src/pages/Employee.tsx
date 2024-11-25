@@ -97,7 +97,7 @@ const Employee = () => {
         }
 
         fetchStudentList();
-    }, []);
+    });
     
     return (
         <div>

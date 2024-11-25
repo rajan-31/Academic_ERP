@@ -15,7 +15,7 @@ const Navbar = () => {
     useEffect(() => {
         const userType = localStorage.getItem("userType");
         setLoggedInUserType(userType ? userType : "");
-    }, []);
+    });
 
     return (
         <nav className="flex gap-x-2 px-10 py-3 bg-sky-400">

@@ -8,7 +8,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Student from './pages/Student';
 import Employee from './pages/Employee';
-import Navbar from './components/Layout';
 import Layout from './components/Layout';
 import axios from "axios";
 import StudentDetails from "./pages/StudentDetails";
