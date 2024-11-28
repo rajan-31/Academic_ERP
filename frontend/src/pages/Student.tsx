@@ -1,6 +1,5 @@
 import { Button } from "primereact/button";
 import { FileUpload, FileUploadSelectEvent } from "primereact/fileupload";
-import { Image } from "primereact/image";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { useEffect, useRef, useState } from "react";

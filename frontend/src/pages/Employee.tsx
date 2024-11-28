@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
@@ -48,8 +47,6 @@ const Employee = () => {
         e.preventDefault();
         setIsLoadingAdmit(true);
         try {
-            const jwtToken = localStorage.getItem("jwtToken");
-
             const formData = new FormData();
 
             if(!domain){
@@ -76,6 +73,11 @@ const Employee = () => {
 
             setSuccessMessage("Student admitted successfully!");
             setErrorMessage("");
+            setFristName("");
+            setLastName("");
+            setDomain("");
+            setPhotograph(null);
+            fileUploadRef.current.clear();
             fetchStudentList();
         } catch (error: any) {
             if(error.status === 400)

@@ -1,9 +1,7 @@
-import axios from "axios";
 import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
 import { Dropdown } from "primereact/dropdown";
 import { FileUpload, FileUploadSelectEvent } from "primereact/fileupload";
-import { Image } from "primereact/image";
 import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
@@ -122,6 +120,7 @@ const StudentDetails = () => {
             fetchData();
             
             fileUploadRef.current.clear();
+            setPhotograph(null);
             setEmailModify(false);
             setRollNumberModify(false);
         } catch (error: any) {
