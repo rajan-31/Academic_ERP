@@ -1,5 +1,13 @@
 # Academic ERP
 
+## Technologies Used
+
+## Frontend
+
+## Database
+
+## Backend
+
 ## 1.1 Student Admission
 Ask for student details including photograph(do not save as blob), and the domain(Drop Down
 Selection) like iM.Tech CSE, M.Tech ECE etc. On the basis of the above selection assign unique roll number based on pattern like (IMT20xxxxx, MS20xxxxx).
@@ -19,12 +27,16 @@ domain (Drop Down Selection), accordingly update all referenced tables.
 ## To Do
 - ~~Handle what to do with jwt when email is changed, since it's will be invalid and some methods will use it until logged out~~
 - On roll number change rename old photo OR use student id for name of the image
-- frontend structure
-- SQL scripts
-- More exception handling
+- ~~frontend structure~~
+- ~~SQL scripts~~
+- ~~More exception handling~~
+
+# Improvements
+- Frontend more modular
 
 ## Production: To Do
 - Change generateSecurePassword() methods default password, and change password length
+- Change password option
 - Change min, max password length in UserCredentials entity and frontend
 - Remove CORS setting
 
