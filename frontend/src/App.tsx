@@ -17,7 +17,7 @@ import Employee from './pages/Employee';
 import Layout from './components/Layout';
 import axios from "axios";
 import StudentDetails from "./pages/StudentDetails";
-import { AuthProvider } from "./components/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 
 const router = createBrowserRouter([
 	{

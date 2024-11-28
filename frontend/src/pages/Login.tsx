@@ -5,7 +5,7 @@ import { Message } from "primereact/message";
 import { Password } from "primereact/password";
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../components/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
     const [email, setEmail] = useState("doe.john558@iiitb.ac.in");

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 import {Menubar} from 'primereact/menubar';
 import { MenuItem } from "primereact/menuitem";
