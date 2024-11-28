@@ -78,7 +78,14 @@ const Navbar = () => {
         return menuItems;
     }
     
-    const menuStart = <img alt="logo" src="/favicon.svg" style={{width: "2.5rem", height: "2.5rem"}} className="mr-2"></img>;
+    const menuStart = <a
+        onClick={ () => { navigate("/"); } }
+        className="cursor-pointer"
+    >
+        <img alt="logo" src="/favicon.svg" 
+            style={{width: "2.5rem", height: "2.5rem"}} className="mr-2"
+        ></img>
+    </a>;
 
     const onLogout = () => {
         localStorage.removeItem("jwtToken");
