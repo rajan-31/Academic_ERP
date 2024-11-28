@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Button } from "primereact/button";
 import { FileUpload, FileUploadSelectEvent } from "primereact/fileupload";
 import { Image } from "primereact/image";
@@ -6,22 +5,12 @@ import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ProfileImage } from "../components/Student/ProfileImage";
+
+import StudentData from "../types/StudentTypes";
+import { keyLabelPairs, toDomainName, toSpecializationName } from "../utils/fixedDataMappings";
 import { getStudentByEmail, updateStudentById } from "../utils/httpUtils";
 
-type StudentData = {
-    placement: number,
-    student_id: number,
-    roll_number: string,
-    first_name: string,
-    last_name: string,
-    email: string,
-    photograph_path: string,
-    cgpa: number,
-    total_credits: number,
-    graduation_year: number,
-    domain: number,
-    specialization: number
-};
 
 const Student = () => {
     const [studentData, setStudentData] = useState< StudentData | null>(null);
@@ -37,44 +26,6 @@ const Student = () => {
     const navigate = useNavigate();
     const fileUploadRef = useRef<any>(null);
     const toastRef = useRef<any>(null);
-
-    const keyLabelPairs: { key: keyof StudentData, label: string }[] = [
-        { key: "roll_number", label: "Roll Number" },
-        { key: "email", label: "Email" },
-        { key: "domain", label: "Domain" },
-        { key: "specialization", label: "Specialization" },
-        { key: "cgpa", label: "CGPA" },
-        { key: "total_credits", label: "Total Credits" },
-        { key: "graduation_year", label: "Graduation Year" }
-    ];
-
-    const domainsList = [
-        { label: "M. Tech. CSE", value: 1 },
-        { label: "M. Tech. ECE", value: 2 },
-        { label: "I. M. Tech. CSE", value: 3 },
-        { label: "I. M. Tech. ECE", value: 4 },
-        { label: "M. S. CSE", value: 5 },
-        { label: "M. S. ECE", value: 6 },
-    ];
-
-    const toDomainName = (domainCode: number) => {
-        const domain = domainsList.find(domain => domain.value === domainCode);
-        return domain ? domain.label : "Unknown";
-    };
-
-    const specializationList = [
-        { label: "Artificial Intelligence and Machine Learning", value: 1 },
-        { label: "Theoretical Computer Science", value: 2 },
-        { label: "Software Systems", value: 3 },
-        { label: "Networking and Communication", value: 4 },
-        { label: "VLSI Systems", value: 5 },
-        { label: "Digital Society", value: 6 }
-    ];
-
-    const toSpecializationName = (specializationCode: number) => {
-        const specialization = specializationList.find(specialization => specialization.value === specializationCode);
-        return specialization ? specialization.label : "Unknown";
-    };
 
     const handleFileChange = (e: FileUploadSelectEvent) => {
         const file = e.files[0];
@@ -106,8 +57,6 @@ const Student = () => {
         }
 
         try {
-            const jwtToken = localStorage.getItem("jwtToken");
-
             let modifiedDataPresent: boolean = false;
 
             const formData = new FormData();
@@ -180,27 +129,14 @@ const Student = () => {
     }, []);
 
     return (
-        <div style={{height: "calc(100vh - 62px)"}} className="flex flex-col">
+        <div className="main-container flex flex-col">
             <Toast ref={toastRef} className="mt-20" />
             <div className="flex-1">
                 <div className="text-3xl text-center mt-5 mb-4 font-bold text-blue-600 capitalize">
                     {studentData ? studentData.first_name + " " + studentData.last_name : ""}
                 </div>
 
-                <div className="mb-5 flex justify-center">
-                    <Image src={imageSrc} alt="Profile" 
-                        height="200"
-                        preview={true}
-                        pt={{
-                            root: {className: "flex justify-center rounded-full overflow-hidden shadow-xl shadow-blue-500/50 w-[200px] h-[200px]"},
-                        }}
-                        closeOnEscape={true}
-                        onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            setImageSrc("/images/user_placeholder.png");
-                        }}
-                    />
-                </div>
+                <ProfileImage imageSrc={imageSrc} setImageSrc={setImageSrc} />
 
                 <form onSubmit={handleFormSubmit} className="max-w-[700px] mx-auto px-3 mb-16">
                     <div className="flex gap-2 flex-wrap">
@@ -280,40 +216,6 @@ const Student = () => {
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
-
-
-
-
-            {/* { studentData &&
-                <div>
-                    <pre>
-                        <code>{JSON.stringify(studentData, null, 4)}</code>
-                    </pre>
-
-                    <img src={`${process.env.REACT_APP_API_DOMAIN}${studentData.photograph_path}`} width="100" alt="Profile" />
-                </div>
-            } */}
-
-            {/* <form onSubmit={handleFormSubmit}>
-                <input type="text" value={firstName} placeholder="First Name" required
-                    className="rounded border-2 border-indigo-500 capitalize"
-                    onChange={e => setFirstName(e.target.value.toLowerCase())}
-                />
-                <input type="text" value={lastName} placeholder="Last Name" required
-                    className="rounded border-2 border-indigo-500 capitalize"
-                    onChange={e => setLastName(e.target.value.toLowerCase())}
-                />                
-
-                <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange}/>
-
-                <button type="submit" className="bg-emerald-500">Update</button>
-            </form> */}
         </div>
     );
 }

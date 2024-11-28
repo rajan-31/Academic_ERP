@@ -1,13 +1,6 @@
-import './App.css';
-import {
-	createBrowserRouter,
-	RouterProvider,
-} from "react-router-dom";
+import './App.css'
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { PrimeReactProvider } from 'primereact/api';
-// import 'primereact/resources/themes/tailwind-light/theme.css';
-// import 'primereact/resources/primereact.min.css';
-// import 'primeicons/primeicons.css';
-// import 'primeflex/primeflex.css';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -41,7 +34,7 @@ const router = createBrowserRouter([
 				element: <Student />
 			},
 			{
-				path: "/students/:studentId",
+				path: "/students/:studentId",	// dynamic route
 				element: <StudentDetails />
 			},
 			{
@@ -64,8 +57,10 @@ const router = createBrowserRouter([
 );
 
 function App() {
+	// to set the base url for axios
 	axios.defaults.baseURL = `${process.env.REACT_APP_API_DOMAIN}${process.env.REACT_APP_API_PATH}`;
 
+	// confiuration for prime react
 	const primeReactConfig = {
 		ripple: true,
 		CSSTransition: true,

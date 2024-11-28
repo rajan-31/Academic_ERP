@@ -5,6 +5,7 @@ import { Message } from "primereact/message";
 import { Password } from "primereact/password";
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import AuthFormContainer from "../components/AuthFormContainer";
 import { useAuth } from "../hooks/useAuth";
 import { postLogin } from "../utils/httpUtils";
 
@@ -61,8 +62,7 @@ const Login = () => {
     }, []);
 
     return (
-        <div className="mt-20 mb-5 w-[350px] mx-auto">
-            <img src={`${process.env.PUBLIC_URL}/favicon.svg`} alt="Logo" width="80" height="80" className="mb-10 mx-auto block" />
+        <AuthFormContainer>
             <form onSubmit={handleFormSubmit}>
                 <div className="flex flex-column gap-2 mb-3">
                     <div className="flex gap-2">
@@ -97,7 +97,7 @@ const Login = () => {
                     <Message severity="error" text={errorMessage} className="w-full"/>
                 }
             </form>
-        </div>
+        </AuthFormContainer>
     );
 }
 

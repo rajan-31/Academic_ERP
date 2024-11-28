@@ -12,6 +12,7 @@ import { TabMenu } from "primereact/tabmenu";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StudentData from "../types/StudentTypes";
+import { domainsStringsList } from "../utils/fixedDataMappings";
 import { admitNewStudent, getAllStudents } from "../utils/httpUtils";
 
 const Employee = () => {
@@ -21,15 +22,6 @@ const Employee = () => {
     const [photograph, setPhotograph] = useState<File | null>(null);
 
     const [studentListData, setStudentListData] = useState<[StudentData] | []>([]);
-
-    const domainsList = [
-        { label: "M. Tech. CSE", value: "1" },
-        { label: "M. Tech. ECE", value: "2" },
-        { label: "I. M. Tech. CSE", value: "3" },
-        { label: "I. M. Tech. ECE", value: "4" },
-        { label: "M. S. CSE", value: "5" },
-        { label: "M. S. ECE", value: "6" },
-    ];
 
     const navigate = useNavigate();
 
@@ -143,7 +135,7 @@ const Employee = () => {
     />;
     
     return (
-        <div style={{height: "calc(100vh - 62px)"}} className="flex flex-col">
+        <div className="main-container flex flex-col">
             <div>
                 <TabMenu model={items} 
                     activeIndex={activeTabIndex} 
@@ -220,7 +212,7 @@ const Employee = () => {
                         <label htmlFor="domain" className="font-bold">Domain</label>
                         <Dropdown id="domain" value={domain}
                             onChange={(e) => setDomain(e.value)} 
-                            options={domainsList}
+                            options={domainsStringsList}
                             optionLabel="label" optionValue="value"
                             placeholder="Select a Domain" className="w-full"
                         />
@@ -259,38 +251,6 @@ const Employee = () => {
                 </form>
                 </div>
             }
-
-
-            {/* <h1>Admit New Student</h1>
-
-            <form onSubmit={handleFormSubmit}>
-                <input type="text" value={firstName} placeholder="First Name" required
-                    className="rounded border-2 border-indigo-500"
-                    onChange={e => setFristName(e.target.value)}
-                />
-                <input type="text" value={lastName} placeholder="Last Name" required
-                    className="rounded border-2 border-indigo-500"
-                    onChange={e => setLastName(e.target.value)}
-                />
-                <select value={domain} onChange={e => setDomain(e.target.value)} required>
-                    <option>Select a domain</option>
-                    {domainsList.map((item, i) => (
-                        <option key={i} value={i+1}>{item}</option>
-                    ))}
-                </select>
-                <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange}/>
-
-                <button type="submit" className="bg-emerald-500">Admit</button>
-            </form>
-
-            {newStudent &&
-            <pre>
-                <code>{newStudent}</code>
-            </pre>
-            }
-
-            <h1>Student List</h1>
-            <StudentList studentList={studentListData} /> */}
 
         </div>
     );

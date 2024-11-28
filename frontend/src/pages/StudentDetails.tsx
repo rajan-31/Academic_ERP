@@ -9,11 +9,12 @@ import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { ProfileImage } from "../components/Student/ProfileImage";
 import StudentData from "../types/StudentTypes";
+import { domainsList, specializationList } from "../utils/fixedDataMappings";
 import { getStudentById, updateStudentById } from "../utils/httpUtils";
 
 const StudentDetails = () => {
-    // const {state}: {state: StudentData} = useLocation();
     const {studentId} = useParams();
     const [studentData, setStudentData] = useState<StudentData>();
 
@@ -39,24 +40,6 @@ const StudentDetails = () => {
     const toastRef = useRef<any>(null);
 
     const navigate = useNavigate();
-
-    const domainsList = [
-        { label: "M. Tech. CSE", value: 1 },
-        { label: "M. Tech. ECE", value: 2 },
-        { label: "I. M. Tech. CSE", value: 3 },
-        { label: "I. M. Tech. ECE", value: 4 },
-        { label: "M. S. CSE", value: 5 },
-        { label: "M. S. ECE", value: 6 },
-    ];
-
-    const specializationList = [
-        { label: "Artificial Intelligence and Machine Learning", value: 1 },
-        { label: "Theoretical Computer Science", value: 2 },
-        { label: "Software Systems", value: 3 },
-        { label: "Networking and Communication", value: 4 },
-        { label: "VLSI Systems", value: 5 },
-        { label: "Digital Society", value: 6 }
-    ];
 
     const handleFileChange = (e: FileUploadSelectEvent) => {
         const file = e.files[0];
@@ -181,7 +164,7 @@ const StudentDetails = () => {
     }, [])
 
     return (
-        <div style={{height: "calc(100vh - 62px)"}} className="flex flex-col">
+        <div className="main-container flex flex-col">
             <Toast ref={toastRef} className="mt-20" />
             <div className="flex-1">
                 <div className="text-3xl text-center mt-5 mb-4 font-bold text-blue-600">
@@ -189,20 +172,7 @@ const StudentDetails = () => {
                     Student Details
                 </div>
 
-                <div className="mb-5 flex justify-center">
-                    <Image src={imageSrc} alt="Profile" 
-                        width="200" height="200"
-                        preview={true}
-                        pt={{
-                            root: {className: "rounded-full overflow-hidden shadow-xl shadow-blue-500/50 w-[200px] h-[200px]"},
-                        }}
-                        closeOnEscape={true}
-                        onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            setImageSrc("/images/user_placeholder.png");
-                        }}
-                    />
-                </div>
+                <ProfileImage imageSrc={imageSrc} setImageSrc={setImageSrc} />
 
                 <form onSubmit={handleFormSubmit} className="max-w-[700px] mx-auto px-3 mb-20">
                     <div className="flex gap-2 flex-wrap">
@@ -335,85 +305,6 @@ const StudentDetails = () => {
                     />
                 </form>
             </div>
-
-
-
-
-            {/* { state &&
-                <div>
-                    <pre>
-                        <code>{JSON.stringify(studentData, null, 4)}</code>
-                    </pre>
-    
-                    <img src={`${process.env.REACT_APP_API_DOMAIN}${state.photograph_path}`} 
-                    width="100" alt="Profile" />
-                </div>
-            } */}
-            {/* <div className="card flex justify-content-center">
-            <Button label="Show" icon="pi pi-external-link" onClick={() => setVisible(true)} />
-            <Dialog header="Header" visible={visible} style={{ width: '50vw' }} onHide={() => {if (!visible) return; setVisible(false); }}>
-            { state &&
-                <div>
-                    <pre>
-                        <code>{JSON.stringify(studentData, null, 4)}</code>
-                    </pre>
-    
-                    <img src={`${process.env.REACT_APP_API_DOMAIN}${state.photograph_path}`} width="100" alt="Profile" />
-                </div>
-            }
-            
-            <form onSubmit={handleFormSubmit}>
-                <input type="text" value={firstName} placeholder="First Name"
-                    className="rounded border-2 border-indigo-500"
-                    onChange={e => setFirstName(e.target.value)}
-                />
-                <input type="text" value={lastName} placeholder="Last Name"
-                    className="rounded border-2 border-indigo-500"
-                    onChange={e => setLastName(e.target.value)}
-                />
-                <select value={domain} onChange={e => setDomain(e.target.value)}>
-                    <option>Select a domain</option>
-                    {domainsList.map((item, i) => (
-                        <option key={i} value={i+1}>{item.label}</option>
-                    ))}
-                </select>
-                <input type="file" accept="image/png, image/jpeg"/>
-
-                <div>
-                    <label htmlFor="email_modify">Generate New Email</label>
-                    <input type="checkbox" id="email_modify" checked={emailModify} onChange={(e) => setEmailModify(e.target.checked)}/>
-                </div>
-                <div>
-                    <label htmlFor="roll_number_modify">Generate New Roll Number</label>
-                    <input type="checkbox" id="roll_number_modify" checked={rollNumberModify} onChange={(e) => setRollNumberModify(e.target.checked)}/>
-                </div>
-                <div>
-                    <input type="number" min="0" max="4" step="0.01" value={cgpa} placeholder="CGPA"
-                        className="rounded border-2 border-indigo-500"
-                        // onChange={e => setCgpa(e.target.value)}
-                    />
-                    <input type="number" min="0" step="1" value={totalCredits} placeholder="Total Credits"
-                        className="rounded border-2 border-indigo-500"
-                        // onChange={e => setTotalCredits(e.target.value)}
-                    />
-                    <input type="number" min="1900" step="1" value={graduationYear} placeholder="Graduation Year"
-                        className="rounded border-2 border-indigo-500"
-                        // onChange={e => setGraduationYear(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <select value={specialization} onChange={e => setSpecialization(e.target.value)}>
-                        <option>Select a specialization</option>
-                        {specializationList.map((item, i) => (
-                            <option key={i} value={i+1}>{item}</option>
-                        ))}
-                    </select>
-                </div>
-
-                <button type="submit" className="bg-emerald-500">Update</button>
-            </form>
-            </Dialog>
-        </div>*/}
         </div>
     )
 }
