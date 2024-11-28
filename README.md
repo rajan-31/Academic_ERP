@@ -13,15 +13,27 @@ domain (Drop Down Selection), accordingly update all referenced tables.
 
 ### Backend
 - Spring Boot
+  - Spring Boot DevTools
+  - Lombok
+  - Spring Web
+  - Spring Security
+  - Spring Data JPA
+  - MySQL Driver
+  - Validation
+  - jjwt
+  - Bouncycastle (Argon2)
 - MySQL
 
 ### Frontend
+- Typescript
 - React.js
+  - Axios
 - Tailwindcss
 - Prime-React
 
 ## Features
 - JWT based authentication
+- Role-based access control
 - Argon2 password hashing
 - Global Exception Handling
 - Polished Frontend
@@ -33,9 +45,13 @@ domain (Drop Down Selection), accordingly update all referenced tables.
 
 ## Potential Improvements
 - Frontend more modular
+- Paging with data JPA
+- Advanced spring security
+- Use state management library like Redux
 
 ## Production: To Do List
-- Use Tomcat Web Server (proxy)
+- Use Tomcat Web/application Server
+- Deploy using docker
 - Change generateSecurePassword() methods default password, and change password length
 - Change password option
 - Change min, max password length in UserCredentials entity and frontend
@@ -50,6 +66,9 @@ domain (Drop Down Selection), accordingly update all referenced tables.
   - Student Admission
   - Student Modification
 
+# UML
+
+![UML](./UML_Academic_ERP_1.2.png)
 
 ---
 
@@ -157,3 +176,9 @@ SELECT * FROM domain;
 SELECT * FROM specialization;
 SELECT * FROM placement;
 ```
+
+<!--
+Module 1.2 modify students details
+We have a students tables which contains their roll number, photo, domain etc. Create another table for Students' educational details like 12th school, percentage, btech cllg, perc, MTech etc or whatever other details you can think of.
+You will for all the information and then update the tables accordingly. 
+-->
