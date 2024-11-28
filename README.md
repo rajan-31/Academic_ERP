@@ -21,10 +21,11 @@ domain (Drop Down Selection), accordingly update all referenced tables.
 - Prime-React
 
 ## Features
-- Logging with Log4J
 - JWT based authentication
+- Argon2 password hashing
 - Global Exception Handling
 - Polished Frontend
+- Logging errors with Log4J
 
 ### Misc
 - Unique roll number based on domain
