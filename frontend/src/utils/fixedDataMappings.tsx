@@ -39,10 +39,10 @@ export const keyLabelPairs: { key: keyof StudentData, label: string }[] = [
 
 export const toDomainName = (domainCode: number) => {
     const domain = domainsList.find(domain => domain.value === domainCode);
-    return domain ? domain.label : "Unknown";
+    return domain ? domain.label : "";
 };
 
 export const toSpecializationName = (specializationCode: number) => {
     const specialization = specializationList.find(specialization => specialization.value === specializationCode);
-    return specialization ? specialization.label : "Unknown";
+    return specialization ? specialization.label : "";
 };

@@ -11,7 +11,7 @@ export const postLogin = async (data: { email: string, password: string }) => {
 
 export const postRegister = async (data: { email: string, password: string }) => {
     try {
-        const res = await axios.post("/auth/login", data);
+        const res = await axios.post("/auth/signup", data);
         return res.data;
     } catch (error) {
         throw error;
