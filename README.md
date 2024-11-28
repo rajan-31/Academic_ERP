@@ -1,44 +1,54 @@
 # Academic ERP
 
-## Technologies Used
-
-## Frontend
-
-## Database
-
-## Backend
-
-## 1.1 Student Admission
+## Goals
+### 1.1 Student Admission
 Ask for student details including photograph(do not save as blob), and the domain(Drop Down
 Selection) like iM.Tech CSE, M.Tech ECE etc. On the basis of the above selection assign unique roll number based on pattern like (IMT20xxxxx, MS20xxxxx).
 
-## 1.2 Student Details Modify
+### 1.2 Student Details Modify
 Modify all details of the student including roll number, photograph(do not save as blob) and
 domain (Drop Down Selection), accordingly update all referenced tables.
 
+## Technologies Used
+
+### Backend
+- Spring Boot
+- MySQL
+
+### Frontend
+- React.js
+- Tailwindcss
+- Prime-React
+
 ## Features
-- Logging
+- Logging with Log4J
+- JWT based authentication
+- Global Exception Handling
+- Polished Frontend
+
+### Misc
 - Unique roll number based on domain
 - Unique, simple email
-- JWT Auth
-- Global Exception Handler
-- Polished frontend
 
-## To Do
-- ~~Handle what to do with jwt when email is changed, since it's will be invalid and some methods will use it until logged out~~
-- On roll number change rename old photo OR use student id for name of the image
-- ~~frontend structure~~
-- ~~SQL scripts~~
-- ~~More exception handling~~
-
-# Improvements
+## Potential Improvements
 - Frontend more modular
 
-## Production: To Do
+## Production: To Do List
+- Use Tomcat Web Server (proxy)
 - Change generateSecurePassword() methods default password, and change password length
 - Change password option
 - Change min, max password length in UserCredentials entity and frontend
-- Remove CORS setting
+- Apply specific CORS settings
+- Better way to server static content
+
+## Modules
+- Login (Student, Employee)
+- Register (Employee - dummy)
+- Student Profile
+- Employee Dashboard
+  - Student Admission
+  - Student Modification
+
 
 ---
 
