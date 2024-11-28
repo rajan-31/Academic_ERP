@@ -1,6 +1,7 @@
 package org.myprojects.academic_erp.mapper;
 
 import lombok.RequiredArgsConstructor;
+import org.myprojects.academic_erp.dto.ErrorResponse;
 import org.myprojects.academic_erp.dto.LoginRequest;
 import org.myprojects.academic_erp.dto.LoginResponse;
 import org.myprojects.academic_erp.entity.UserCredentials;
@@ -21,5 +22,9 @@ public class UserCredentialsMapper {
 
     public LoginResponse toLoginResponse(String jwtToken, String userType) {
         return new LoginResponse(jwtToken, userType);
+    }
+
+    public ErrorResponse toErrorResponse(int status, String message) {
+        return new ErrorResponse(status, message);
     }
 }

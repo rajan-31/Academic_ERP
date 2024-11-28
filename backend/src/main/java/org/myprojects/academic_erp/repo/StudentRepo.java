@@ -12,6 +12,10 @@ import java.util.Optional;
 
 @Repository
 public interface StudentRepo extends JpaRepository<Student, Long> {
+    List<Student> findAllByOrderByDomain();
+    List<Student> findAllByOrderByStudentId();
+
+
     Optional<Student> findByEmail(String email);
 
     Long countByDomain(Domain domain);

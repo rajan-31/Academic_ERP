@@ -44,7 +44,7 @@ public class StudentService {
     // ======================================================
 
     public List<StudentResponse> getStudents() {
-        return studentMapper.toStudentResponseList(studentRepo.findAll());
+        return studentMapper.toStudentResponseList(studentRepo.findAllByOrderByStudentId());
     }
 
     // ======================================================
@@ -198,7 +198,11 @@ public class StudentService {
                 request, existingStudent, domain, specialization, placement
         );
 
-        if(request != null && request.rollNumberModify() != null && request.rollNumberModify()) {
+        if(
+                request != null &&
+                (request.rollNumberModify() != null && request.rollNumberModify()) ||
+                (request != null && request.domain() != null)
+        ) {
             modifiedStudent.setRollNumber(generateRollNumber(domain));
         }
         if(photograph != null && !photograph.isEmpty()) {
