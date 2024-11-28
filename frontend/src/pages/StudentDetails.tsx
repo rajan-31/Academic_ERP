@@ -1,44 +1,88 @@
 import axios from "axios";
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Button } from "primereact/button";
+import { Checkbox } from "primereact/checkbox";
+import { Dropdown } from "primereact/dropdown";
+import { FileUpload, FileUploadSelectEvent } from "primereact/fileupload";
+import { Image } from "primereact/image";
+import { InputNumber } from "primereact/inputnumber";
+import { InputText } from "primereact/inputtext";
+import { Toast } from "primereact/toast";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import StudentData from "../types/StudentTypes";
 
 const StudentDetails = () => {
-    const {state}: {state: StudentData} = useLocation();
-    const [studentData, setStudentData] = useState<StudentData>(state);
+    // const {state}: {state: StudentData} = useLocation();
+    const {studentId} = useParams();
+    const [studentData, setStudentData] = useState<StudentData>();
 
-    const [firstName, setFristName] = useState(studentData.first_name);
-    const [lastName, setLastName] = useState(studentData.last_name);
-    const [domain, setDomain] = useState(String(studentData.domain));
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [domain, setDomain] = useState<null | number>();
     const [photograph, setPhotograph] = useState<File | null>(null);
 
     const [emailModify, setEmailModify] = useState(false);
     const [rollNumberModify, setRollNumberModify] = useState(false);
-    const [cgpa, setCgpa] = useState(studentData.cgpa ? String(studentData.cgpa) : "");
-    const [totalCredits, setTotlCredits] = useState(studentData.total_credits ? String(studentData.total_credits) : "");
-    const [graduationYear, setGraduationYear] = useState(studentData.graduation_year ? String(studentData.graduation_year) : "");
-    const [specialization, setSpecialization] = useState(studentData.specialization ? String(studentData.specialization) : "");
+    const [cgpa, setCgpa] = useState<null | number>();
+    const [totalCredits, setTotalCredits] = useState<null | number>(null);
+    const [graduationYear, setGraduationYear] = useState<null | number>();
+    const [specialization, setSpecialization] = useState<null | number>();
 
-    const domainsList = ["M. Tech. CSE", "M. Tech. ECE", "I. M. Tech. CSE", "I. M. Tech. ECE", "M. S. CSE", "M. S. ECE"];
-    const specializationList = ["Artificial Intelligence and Machine Learning", "Theoretical Computer Science", "Software Systems", "Networking and Communication", "VLSI Systems", "Digital Society"];
+    const [imageSrc, setImageSrc] = useState("");
+    const [email, setEmail] = useState("");
+    const [rollNumber, setRollNumber] = useState("");
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
+    const [isLoadingModify, setIsLoadingmodify] = useState(false);
+
+    const fileUploadRef = useRef<any>(null);
+    const toastRef = useRef<any>(null);
+
+    const domainsList = [
+        { label: "M. Tech. CSE", value: 1 },
+        { label: "M. Tech. ECE", value: 2 },
+        { label: "I. M. Tech. CSE", value: 3 },
+        { label: "I. M. Tech. ECE", value: 4 },
+        { label: "M. S. CSE", value: 5 },
+        { label: "M. S. ECE", value: 6 },
+    ];
+
+    const specializationList = [
+        { label: "Artificial Intelligence and Machine Learning", value: 1 },
+        { label: "Theoretical Computer Science", value: 2 },
+        { label: "Software Systems", value: 3 },
+        { label: "Networking and Communication", value: 4 },
+        { label: "VLSI Systems", value: 5 },
+        { label: "Digital Society", value: 6 }
+    ];
+
+    const handleFileChange = (e: FileUploadSelectEvent) => {
+        const file = e.files[0];
 
         if (file) {
             const allowedTypes = ['image/jpeg', 'image/png'];
       
             if (!allowedTypes.includes(file.type)) {
-                alert('Please select a JPG or PNG file.');
+                toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Only JPG or PNG files are allowed.' });
+                fileUploadRef.current.clear();
+                setPhotograph(null);
                 return;
             }
 
             setPhotograph(file);
+        } else {
+            setPhotograph(null);
         }
     }
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setIsLoadingmodify(true);
+
+        if(graduationYear && (graduationYear < 2000 || graduationYear > 2100)) {
+            toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Graduation year is invalid' });
+            setIsLoadingmodify(false);
+            return;
+        }
 
         try {
             const jwtToken = localStorage.getItem("jwtToken");
@@ -60,15 +104,15 @@ const StudentDetails = () => {
                 specialization?: string
             } = {};
 
-            if(firstName && firstName.trim() !== studentData.first_name) jsonData.first_name = firstName;
-            if(lastName && lastName.trim() !== studentData.last_name) jsonData.last_name = lastName;
-            if(domain && domain !== String(studentData.domain)) jsonData.domain = domain;
+            if(firstName && firstName.trim() !== studentData?.first_name) jsonData.first_name = firstName;
+            if(lastName && lastName.trim() !== studentData?.last_name) jsonData.last_name = lastName;
+            if(domain && domain !== studentData?.domain) jsonData.domain = String(domain);
             if(emailModify) jsonData.email_modify = true;
             if(rollNumberModify) jsonData.email_modify = true;
-            if(cgpa && cgpa !== String(studentData.cgpa)) jsonData.cgpa = cgpa;
-            if(totalCredits && totalCredits !== String(studentData.total_credits)) jsonData.total_credits = totalCredits;
-            if(graduationYear && graduationYear !== String(studentData.graduation_year)) jsonData.graduation_year = graduationYear;
-            if(specialization && specialization !== String(studentData.specialization)) jsonData.specialization = specialization;
+            if(cgpa && cgpa !== studentData?.cgpa) jsonData.cgpa = String(cgpa);
+            if(totalCredits && totalCredits !== studentData?.total_credits) jsonData.total_credits = String(totalCredits);
+            if(graduationYear && graduationYear !== studentData?.graduation_year) jsonData.graduation_year = String(graduationYear);
+            if(specialization && specialization !== studentData?.specialization) jsonData.specialization = String(specialization);
 
             if(Object.keys(jsonData).length > 0) {
                 formData.append("data", new Blob([JSON.stringify(jsonData)], { type: "application/json" }));
@@ -81,12 +125,13 @@ const StudentDetails = () => {
             }
 
             if(!modifiedDataPresent){
-                alert("Nothing has beed modified!");
+                setIsLoadingmodify(false);
+                toastRef.current.show({ severity: 'info', summary: 'Info', detail: 'Nothing has been modified!' });
                 return;
             }
 
             // Send the request
-            const res = await axios.put(`/students/${studentData.student_id}`, formData, {
+            const res = await axios.put(`/students/${studentId}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     "Authorization": "Bearer " + jwtToken
@@ -96,15 +141,225 @@ const StudentDetails = () => {
             const data: StudentData = res.data;
 
             setStudentData(data);
+            toastRef.current.show({ severity: 'success', summary: 'Success', detail: 'Student details updated successfully!' });
 
-            alert("Updated successfully!");
+            fetchData();
+            
+            fileUploadRef.current.clear();
+            setEmailModify(false);
+            setRollNumberModify(false);
         } catch (error) {
-            alert("Failed to update student");
+            toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to update student details' });
+        }
+        setIsLoadingmodify(false);
+    }
+
+    const fetchData = async () => {
+        try {
+            const jwtToken = localStorage.getItem("jwtToken");
+
+            const res = await axios.get(`/students/${studentId}`, {
+                headers: {
+                    "Authorization": "Bearer " + jwtToken
+                }
+            });
+            const data: StudentData = res.data;
+
+            if (data) {
+                setStudentData(data);
+                setFirstName(data.first_name);
+                setLastName(data.last_name);
+                setDomain(data.domain);
+                setCgpa(data.cgpa);
+                setTotalCredits(data.total_credits);
+                setGraduationYear(data.graduation_year);
+                setSpecialization(data.specialization);
+                setEmail(data.email);
+                setRollNumber(data.roll_number);
+                setImageSrc(`http://localhost:8080${data.photograph_path}`)
+            }
+        } catch (error) {
+            toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch student details' });
         }
     }
 
+    useEffect(() => {
+        fetchData();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
     return (
-        <div>
+        <div style={{height: "calc(100vh - 62px)"}} className="flex flex-col">
+            <Toast ref={toastRef} className="mt-20" />
+            <div className="flex-1">
+                <div className="text-3xl text-center mt-5 mb-4 font-bold text-blue-600">
+                    <i className="pi pi-id-card mr-2 text-3xl"></i>
+                    Student Details
+                </div>
+
+                <div className="mb-5 flex justify-center">
+                    <Image src={imageSrc} alt="Profile" 
+                        width="200" height="200"
+                        preview={true}
+                        pt={{
+                            root: {className: "rounded-full overflow-hidden shadow-xl shadow-blue-500/50 w-[200px] h-[200px]"},
+                        }}
+                        closeOnEscape={true}
+                        onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            setImageSrc("/images/user_placeholder.png");
+                        }}
+                    />
+                </div>
+
+                <form onSubmit={handleFormSubmit} className="max-w-[700px] mx-auto px-3 mb-20">
+                    <div className="flex gap-2 flex-wrap">
+                        <div className="flex-1 flex flex-column gap-2 mb-3">
+                            <label htmlFor="first_name" className="font-bold">First Name</label>
+                            <InputText type="text" value={firstName} keyfilter="alpha" id="first_name"
+                                className="capitalize"
+                                placeholder="First Name"
+                                onChange={(e) => setFirstName(e.target.value)}
+                                maxLength={40}
+                            />
+                        </div>
+                        <div className="flex-1 flex flex-column gap-2 mb-3">
+                            <label htmlFor="last_name" className="font-bold">Last Name</label>
+                            <InputText type="text" value={lastName} keyfilter="alpha" id="last_name"
+                                className="capitalize"
+                                placeholder="Last Name"
+                                onChange={(e) => setLastName(e.target.value)} 
+                                maxLength={40}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex gap-2 flex-wrap mb-5">
+                        <div className="flex-1 flex-col">
+                            <div className="flex flex-column gap-2 mb-3">
+                                <label htmlFor="roll_number" className="font-bold">Roll Number</label>
+                                <InputText type="text" value={rollNumber} keyfilter="alpha" id="roll_number"
+                                    disabled={true}
+                                />
+                            </div>
+                            <div className="flex align-items-center gap-2 mb-3">
+                                <Checkbox inputId="roll_number_modify" checked={rollNumberModify} onChange={(e) => setRollNumberModify(e.checked ? true : false)}/>
+                                <label htmlFor="roll_number_modify">Assign New Roll Number</label>
+                            </div>
+                        </div>
+                        <div className="flex-1 flex-col">
+                            <div className="flex flex-column gap-2 mb-3">
+                                <label htmlFor="email" className="font-bold">Email</label>
+                                <InputText type="text" value={email} keyfilter="alpha" id="email"
+                                    disabled={true}
+                                />
+                            </div>
+                            <div className="flex align-items-center gap-2 mb-3">
+                                <Checkbox inputId="email_modify" checked={emailModify} onChange={(e) => setEmailModify(e.checked ? true : false)}/>
+                                <label htmlFor="email_modify">Assign New Email</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div className="flex flex-column gap-2 mb-6">
+                        <label htmlFor="photograph" className="font-bold">Photograph</label>
+                        <FileUpload id="photograph"  accept="image/png, image/jpeg" 
+                            ref={fileUploadRef}
+                            multiple={false} maxFileSize={1000000}
+                            onSelect={handleFileChange} 
+                            onClear={() => setPhotograph(null)}
+                            onRemove={() => setPhotograph(null)}
+                            uploadOptions= {{className: "hidden"}}
+                            pt={{
+                                badge: {root: {className: "hidden"}},
+                                buttonbar: {className: "justify-content-center"},
+                            }}
+                            chooseOptions={{icon: "pi pi-image"}}
+                        />
+                    </div>
+
+                    
+                    <div className="flex flex-column gap-2 mb-3">
+                        <label htmlFor="domain" className="font-bold">Domain</label>
+                        <Dropdown id="domain" value={domain}
+                            onChange={(e) => setDomain(e.value)} 
+                            options={domainsList}
+                            optionLabel="label" optionValue="value"
+                            placeholder="Select a Domain" className="w-full"
+                        />
+                    </div>
+                    <div className="flex flex-column gap-2 mb-3">
+                        <label htmlFor="specialization" className="font-bold">Specialization</label>
+                        <Dropdown id="specialization" value={specialization}
+                            onChange={(e) => setSpecialization(e.value)} 
+                            options={specializationList}
+                            optionLabel="label" optionValue="value"
+                            placeholder="Select a Specialization" className="w-full"
+                            showClear={true}
+                        />
+                    </div>
+                    
+
+                    <div className="flex gap-2 flex-wrap">
+                        <div className="flex-1 flex flex-column gap-2 mb-3">
+                            <label htmlFor="cgpa" className="font-bold">CGPA</label>
+                            <InputNumber value={cgpa} inputId="cgpa"
+                                placeholder="CGPA"
+                                onChange={(e) => setCgpa(e.value ? e.value : 0)}
+                                min={0} max={4} step={0.01}
+                                showButtons={true}
+                            />
+                        </div>
+                        <div className="flex-1 flex flex-column gap-2 mb-3">
+                            <label htmlFor="credits" className="font-bold">Total Credits</label>
+                            <InputNumber value={totalCredits} inputId="credits"
+                                placeholder="Total Credits"
+                                onChange={(e) => setTotalCredits(e.value ? e.value : 0)}
+                                min={0} max={500} step={1}
+                                showButtons={true}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex flex-column gap-2 mb-3">
+                        <label htmlFor="graduation-year" className="font-bold">Graduation Year</label>
+                        <InputNumber value={graduationYear} inputId="graduation-year"
+                            placeholder="Graduation Year"
+                            onChange={(e) => setGraduationYear(e.value ? e.value : 0)}
+                            min={0} max={2100} step={1}
+                            showButtons={true} useGrouping={false}
+                        />
+                    </div>
+
+                    <Button type="submit" label="Modify"
+                        raised icon="pi pi-user-edit" 
+                        loading={isLoadingModify}
+                        className="w-full mb-3"
+                        pt={{
+                            icon: {className: "mr-auto"}
+                        }}
+                    />
+                </form>
+            </div>
+
+
+
+
+            {/* { state &&
+                <div>
+                    <pre>
+                        <code>{JSON.stringify(studentData, null, 4)}</code>
+                    </pre>
+    
+                    <img src={`http://localhost:8080${state.photograph_path}`} 
+                    width="100" alt="Profile" />
+                </div>
+            } */}
+            {/* <div className="card flex justify-content-center">
+            <Button label="Show" icon="pi pi-external-link" onClick={() => setVisible(true)} />
+            <Dialog header="Header" visible={visible} style={{ width: '50vw' }} onHide={() => {if (!visible) return; setVisible(false); }}>
             { state &&
                 <div>
                     <pre>
@@ -118,7 +373,7 @@ const StudentDetails = () => {
             <form onSubmit={handleFormSubmit}>
                 <input type="text" value={firstName} placeholder="First Name"
                     className="rounded border-2 border-indigo-500"
-                    onChange={e => setFristName(e.target.value)}
+                    onChange={e => setFirstName(e.target.value)}
                 />
                 <input type="text" value={lastName} placeholder="Last Name"
                     className="rounded border-2 border-indigo-500"
@@ -127,10 +382,10 @@ const StudentDetails = () => {
                 <select value={domain} onChange={e => setDomain(e.target.value)}>
                     <option>Select a domain</option>
                     {domainsList.map((item, i) => (
-                        <option key={i} value={i+1}>{item}</option>
+                        <option key={i} value={i+1}>{item.label}</option>
                     ))}
                 </select>
-                <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange}/>
+                <input type="file" accept="image/png, image/jpeg"/>
 
                 <div>
                     <label htmlFor="email_modify">Generate New Email</label>
@@ -143,15 +398,15 @@ const StudentDetails = () => {
                 <div>
                     <input type="number" min="0" max="4" step="0.01" value={cgpa} placeholder="CGPA"
                         className="rounded border-2 border-indigo-500"
-                        onChange={e => setCgpa(e.target.value)}
+                        // onChange={e => setCgpa(e.target.value)}
                     />
                     <input type="number" min="0" step="1" value={totalCredits} placeholder="Total Credits"
                         className="rounded border-2 border-indigo-500"
-                        onChange={e => setTotlCredits(e.target.value)}
+                        // onChange={e => setTotalCredits(e.target.value)}
                     />
                     <input type="number" min="1900" step="1" value={graduationYear} placeholder="Graduation Year"
                         className="rounded border-2 border-indigo-500"
-                        onChange={e => setGraduationYear(e.target.value)}
+                        // onChange={e => setGraduationYear(e.target.value)}
                     />
                 </div>
                 <div>
@@ -165,6 +420,8 @@ const StudentDetails = () => {
 
                 <button type="submit" className="bg-emerald-500">Update</button>
             </form>
+            </Dialog>
+        </div>*/}
         </div>
     )
 }

@@ -1,10 +1,84 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from "./AuthContext";
+
+import {Menubar} from 'primereact/menubar';
+import { MenuItem } from "primereact/menuitem";
 
 const Navbar = () => {
     const navigate = useNavigate();
     const { loggedInUserType, setLoggedInUserType } = useAuth();
+    
+    const getMenuItems = (loggedInUserType: string): MenuItem[] => {
+        const menuItems: MenuItem[] = [
+            {
+                label: 'Home',
+                icon: 'pi pi-fw pi-home',
+                command: () => {
+                    navigate("/");
+                }
+            },
+        ];
+
+        if (!loggedInUserType) {
+            menuItems.push(
+                {
+                    label: 'Login',
+                    icon: 'pi pi-fw pi-user',
+                    command: () => {
+                        navigate("/login");
+                    }
+                },
+                {
+                    label: 'Register',
+                    icon: 'pi pi-fw pi-user-plus',
+                    command: () => {
+                        navigate("/register");
+                    }
+                },
+            );
+        }
+
+        if (loggedInUserType === "student") {
+            menuItems.push(
+                {
+                    label: 'Student',
+                    icon: 'pi pi-fw pi-user',
+                    command: () => {
+                        navigate("/student");
+                    }
+                },
+            );
+        }
+
+        if (loggedInUserType === "employee") {
+            menuItems.push(
+                {
+                    label: 'Employee',
+                    icon: 'pi pi-fw pi-user',
+                    command: () => {
+                        navigate("/employee");
+                    }
+                },
+            );
+        }
+
+        if (loggedInUserType) {
+            menuItems.push(
+                {
+                    label: 'Logout',
+                    icon: 'pi pi-fw pi-sign-out',
+                    command: () => {
+                        onLogout();
+                    }
+                },
+            );
+        }
+
+        return menuItems;
+    }
+    
+    const menuStart = <img alt="logo" src="/favicon.svg" style={{width: "2.5rem", height: "2.5rem"}} className="mr-2"></img>;
 
     const onLogout = () => {
         localStorage.removeItem("jwtToken");
@@ -15,27 +89,17 @@ const Navbar = () => {
     useEffect(() => {
         const userType = localStorage.getItem("userType");
         setLoggedInUserType(userType ? userType : "");
-    });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setLoggedInUserType]);
 
     return (
-        <nav className="flex gap-x-2 px-10 py-3 bg-sky-400">
-            <Link to="/">Home</Link>
-            { !loggedInUserType &&
-                <>
-                    <Link to="/login">Login</Link>
-                    <Link to="/register">Register</Link>
-                </>
-            }
-            { loggedInUserType === "student" &&
-                <Link to="/student">Student</Link>
-            }
-            { loggedInUserType === "employee" &&
-                <Link to="/employee">Employee</Link>
-            }
-            { loggedInUserType &&
-                <button onClick={onLogout}>Logout</button>
-            }
-        </nav>
+        <Menubar model={getMenuItems(loggedInUserType)} start={menuStart} 
+            pt={{
+                menu: {className: "ml-auto"},
+                button: {className: "ml-auto"}
+            }}
+            className="sticky top-0 shadow-md z-10"
+        />
     );
 }
 

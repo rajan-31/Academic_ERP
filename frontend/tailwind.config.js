@@ -2,10 +2,14 @@
 module.exports = {
 	content: [
 		"./src/**/*.{js,jsx,ts,tsx}",
+		"./node_modules/primereact/**/*.{js,jsx,ts,tsx}"
 	  ],
 	theme: {
 		extend: {},
 	},
 	plugins: [],
+	corePlugins: {
+		preflight: false,
+	},
 }
 

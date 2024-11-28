@@ -3,6 +3,12 @@ import {
 	createBrowserRouter,
 	RouterProvider,
 } from "react-router-dom";
+import { PrimeReactProvider } from 'primereact/api';
+// import 'primereact/resources/themes/tailwind-light/theme.css';
+// import 'primereact/resources/primereact.min.css';
+// import 'primeicons/primeicons.css';
+// import 'primeflex/primeflex.css';
+
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -58,13 +64,20 @@ const router = createBrowserRouter([
 );
 
 function App() {
-	axios.defaults.baseURL = "http://localhost:8080/api/v1"
+	axios.defaults.baseURL = "http://localhost:8080/api/v1";
+
+	const primeReactConfig = {
+		ripple: true,
+		CSSTransition: true,
+	}
 
 	return (
 		<div>
-			<AuthProvider>
-				<RouterProvider router={router} future={{v7_startTransition: true}} />
-			</AuthProvider>
+			<PrimeReactProvider value={primeReactConfig}>
+				<AuthProvider>
+					<RouterProvider router={router} future={{v7_startTransition: true}} />
+				</AuthProvider>
+			</PrimeReactProvider>
 		</div>
 	);
 }
