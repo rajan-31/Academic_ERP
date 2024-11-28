@@ -6,6 +6,7 @@ import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getStudentByEmail, updateStudentById } from "../utils/httpUtils";
 
 type StudentData = {
     placement: number,
@@ -136,15 +137,8 @@ const Student = () => {
                 return;
             }
 
-            // Send the request
-            const res = await axios.put(`/students/${studentData.student_id}`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    "Authorization": "Bearer " + jwtToken
-                }
-            });
 
-            const data: StudentData = res.data;
+            const data: StudentData = await updateStudentById(studentData.student_id, formData);
 
             setStudentData(data);
             setImageSrc(data.photograph_path);
@@ -165,14 +159,8 @@ const Student = () => {
 
     const fetchData = async () => {
         try {
-            const jwtToken = localStorage.getItem("jwtToken");
-
-            const res = await axios.get("/students/email", {
-                headers: {
-                    "Authorization": "Bearer " + jwtToken
-                }
-            });
-            const data: StudentData | null = res.data
+            
+            const data: StudentData | null = await getStudentByEmail();
 
             if(data) {
                 setStudentData(data);

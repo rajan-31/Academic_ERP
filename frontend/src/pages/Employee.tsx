@@ -12,6 +12,7 @@ import { TabMenu } from "primereact/tabmenu";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StudentData from "../types/StudentTypes";
+import { admitNewStudent, getAllStudents } from "../utils/httpUtils";
 
 const Employee = () => {
     const [firstName, setFristName] = useState("john");
@@ -79,12 +80,7 @@ const Employee = () => {
                 formData.append("photograph", photograph);
 
             // Send the request
-            await axios.post("/students", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    "Authorization": "Bearer " + jwtToken
-                }
-            });
+            await admitNewStudent(formData);
 
             setSuccessMessage("Student admitted successfully!");
             setErrorMessage("");
@@ -103,16 +99,9 @@ const Employee = () => {
     const fetchStudentList = async () => {
         setIsLoadingStudentList(true);
         try {
-            const jwtToken = localStorage.getItem("jwtToken");
+            const data: [StudentData] | [] = await getAllStudents();
 
-            const res = await axios.get("/students", {
-                headers: {
-                    "Authorization": "Bearer " + jwtToken
-                }
-            });
-            const data: [StudentData] | [] = res.data? res.data : [];
-
-            setStudentListData(data);
+            setStudentListData(data ? data : []);
         } catch (error) {
             navigate("/login");
         }

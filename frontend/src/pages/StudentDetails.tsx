@@ -10,6 +10,7 @@ import { Toast } from "primereact/toast";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import StudentData from "../types/StudentTypes";
+import { getStudentById, updateStudentById } from "../utils/httpUtils";
 
 const StudentDetails = () => {
     // const {state}: {state: StudentData} = useLocation();
@@ -87,8 +88,6 @@ const StudentDetails = () => {
         }
 
         try {
-            const jwtToken = localStorage.getItem("jwtToken");
-
             let modifiedDataPresent: boolean = false;
 
             const formData = new FormData();
@@ -132,15 +131,7 @@ const StudentDetails = () => {
                 return;
             }
 
-            // Send the request
-            const res = await axios.put(`/students/${studentId}`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    "Authorization": "Bearer " + jwtToken
-                }
-            });
-
-            const data: StudentData = res.data;
+            const data: StudentData = await updateStudentById(studentId, formData);
 
             setStudentData(data);
             toastRef.current.show({ severity: 'success', summary: 'Success', detail: 'Student details updated successfully!' });
@@ -163,14 +154,7 @@ const StudentDetails = () => {
 
     const fetchData = async () => {
         try {
-            const jwtToken = localStorage.getItem("jwtToken");
-
-            const res = await axios.get(`/students/${studentId}`, {
-                headers: {
-                    "Authorization": "Bearer " + jwtToken
-                }
-            });
-            const data: StudentData = res.data;
+            const data: StudentData = await getStudentById(studentId);
 
             if (data) {
                 setStudentData(data);

@@ -1,4 +1,4 @@
-type StudentData = {
+interface StudentData {
     placement: number,
     student_id: number,
     roll_number: string,

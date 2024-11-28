@@ -5,7 +5,8 @@ import { Message } from "primereact/message";
 import { Password } from "primereact/password";
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
+import { postLogin } from "../utils/httpUtils";
 
 const Login = () => {
     const [email, setEmail] = useState("doe.john558@iiitb.ac.in");
@@ -23,8 +24,7 @@ const Login = () => {
         setIsLoading(true);
 
         try {
-            const res = await axios.post("/auth/login", { email, password })
-            const data: {jwtToken: string, user_type: string} = res.data;
+            const data: {jwtToken: string, user_type: string} = await postLogin({ email, password });;
 
             localStorage.setItem("jwtToken", data.jwtToken);
 

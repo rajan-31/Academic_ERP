@@ -5,6 +5,7 @@ import { Message } from "primereact/message";
 import { Password } from "primereact/password";
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { postRegister } from "../utils/httpUtils";
 
 const Register = () => {
     const [email, setEmail] = useState("Cavill.Henry@iiitb.ac.in");
@@ -28,7 +29,7 @@ const Register = () => {
         }
 
         try {
-            await axios.post("/auth/signup", { email, password })
+            await postRegister({email, password});
 
             setErrorMessage("");
             navigate("/login");
