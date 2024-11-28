@@ -199,9 +199,7 @@ const StudentDetails = () => {
                         <div className="flex-1 flex-col">
                             <div className="flex flex-column gap-2 mb-3">
                                 <label htmlFor="roll_number" className="font-bold">Roll Number</label>
-                                <InputText type="text" value={rollNumber} keyfilter="alpha" id="roll_number"
-                                    disabled={true}
-                                />
+                                <div className="p-2 text-gray-600">{rollNumber}&nbsp;</div>
                             </div>
                             <div className="flex align-items-center gap-2 mb-3">
                                 <Checkbox inputId="roll_number_modify" checked={rollNumberModify} onChange={(e) => setRollNumberModify(e.checked ? true : false)}/>
@@ -212,9 +210,7 @@ const StudentDetails = () => {
                         <div className="flex-1 flex-col">
                             <div className="flex flex-column gap-2 mb-3">
                                 <label htmlFor="email" className="font-bold">Email</label>
-                                <InputText type="text" value={email} keyfilter="alpha" id="email"
-                                    disabled={true}
-                                />
+                                <div className="p-2 text-gray-600">{email}&nbsp;</div>
                             </div>
                             <div className="flex align-items-center gap-2 mb-3">
                                 <Checkbox inputId="email_modify" checked={emailModify} onChange={(e) => setEmailModify(e.checked ? true : false)}/>
