@@ -13,14 +13,17 @@ domain (Drop Down Selection), accordingly update all referenced tables.
 - Unique roll number based on domain
 - Unique, simple email
 - JWT Auth
+- Global Exception Handler
+- Polished frontend
 
 ## To Do
-- Handle what to do with jwt when email is changed, since it's will be invalid and some methods will use it until logged out
+- ~~Handle what to do with jwt when email is changed, since it's will be invalid and some methods will use it until logged out~~
 - On roll number change rename old photo OR use student id for name of the image
+- frontend structure
 
 ## Production: To Do
 - Change generateSecurePassword() methods default password, and change password length
-- Change min, max password length in UserCredentials entity
+- Change min, max password length in UserCredentials entity and frontend
 - Remove CORS setting
 
 ---
