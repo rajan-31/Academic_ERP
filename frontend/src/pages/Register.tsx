@@ -33,10 +33,10 @@ const Register = () => {
             setErrorMessage("");
             navigate("/login");
         } catch (error: any) {
-            if(error.status === 401)
+            if(error.status === 409)
                 setErrorMessage("Email already registered!");
             else
-                setErrorMessage("Something went wrong!");
+                setErrorMessage("Something went wrong, try again!");
         }
         setIsLoading(false);
     }

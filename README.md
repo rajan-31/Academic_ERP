@@ -20,6 +20,8 @@ domain (Drop Down Selection), accordingly update all referenced tables.
 - ~~Handle what to do with jwt when email is changed, since it's will be invalid and some methods will use it until logged out~~
 - On roll number change rename old photo OR use student id for name of the image
 - frontend structure
+- SQL scripts
+- More exception handling
 
 ## Production: To Do
 - Change generateSecurePassword() methods default password, and change password length

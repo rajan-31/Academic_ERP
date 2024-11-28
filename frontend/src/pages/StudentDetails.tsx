@@ -8,7 +8,7 @@ import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import StudentData from "../types/StudentTypes";
 
 const StudentDetails = () => {
@@ -36,6 +36,8 @@ const StudentDetails = () => {
 
     const fileUploadRef = useRef<any>(null);
     const toastRef = useRef<any>(null);
+
+    const navigate = useNavigate();
 
     const domainsList = [
         { label: "M. Tech. CSE", value: 1 },
@@ -148,8 +150,13 @@ const StudentDetails = () => {
             fileUploadRef.current.clear();
             setEmailModify(false);
             setRollNumberModify(false);
-        } catch (error) {
-            toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to update student details' });
+        } catch (error: any) {
+            if(error.status === 401)
+                navigate("/login");
+            if(error.status === 400)
+                toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Invalid data!' });
+            else
+                toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong!' });
         }
         setIsLoadingmodify(false);
     }
@@ -176,7 +183,7 @@ const StudentDetails = () => {
                 setSpecialization(data.specialization);
                 setEmail(data.email);
                 setRollNumber(data.roll_number);
-                setImageSrc(`http://localhost:8080${data.photograph_path}`)
+                setImageSrc(`${process.env.REACT_APP_API_DOMAIN}${data.photograph_path}`)
             }
         } catch (error) {
             toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to fetch student details' });
@@ -323,7 +330,7 @@ const StudentDetails = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-column gap-2 mb-3">
+                    <div className="flex flex-column gap-2 mb-5">
                         <label htmlFor="graduation-year" className="font-bold">Graduation Year</label>
                         <InputNumber value={graduationYear} inputId="graduation-year"
                             placeholder="Graduation Year"
@@ -353,7 +360,7 @@ const StudentDetails = () => {
                         <code>{JSON.stringify(studentData, null, 4)}</code>
                     </pre>
     
-                    <img src={`http://localhost:8080${state.photograph_path}`} 
+                    <img src={`${process.env.REACT_APP_API_DOMAIN}${state.photograph_path}`} 
                     width="100" alt="Profile" />
                 </div>
             } */}
@@ -366,7 +373,7 @@ const StudentDetails = () => {
                         <code>{JSON.stringify(studentData, null, 4)}</code>
                     </pre>
     
-                    <img src={`http://localhost:8080${state.photograph_path}`} width="100" alt="Profile" />
+                    <img src={`${process.env.REACT_APP_API_DOMAIN}${state.photograph_path}`} width="100" alt="Profile" />
                 </div>
             }
             

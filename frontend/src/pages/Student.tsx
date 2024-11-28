@@ -151,9 +151,13 @@ const Student = () => {
             toastRef.current.show({ severity: 'success', summary: 'Success', detail: 'Details updated successfully!' });
 
             fileUploadRef.current.clear();
-        } catch (error) {
-            alert("Something went wrong, logging you out.");
-            navigate("/login");
+        } catch (error: any) {
+            if(error.status === 401)
+                navigate("/login");
+            if(error.status === 400)
+                toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Invalid data!' });
+            else
+                toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Something went wrong!' });
         }
 
         setIsLoadingmodify(false);
@@ -174,7 +178,7 @@ const Student = () => {
                 setStudentData(data);
                 setFirstName(data.first_name);
                 setLastName(data.last_name);
-                setImageSrc(data.photograph_path ? `http://localhost:8080${data.photograph_path}` : "")
+                setImageSrc(data.photograph_path ? `${process.env.REACT_APP_API_DOMAIN}${data.photograph_path}` : "")
             }
         } catch (error) {
             navigate("/login");
@@ -304,7 +308,7 @@ const Student = () => {
                         <code>{JSON.stringify(studentData, null, 4)}</code>
                     </pre>
 
-                    <img src={`http://localhost:8080${studentData.photograph_path}`} width="100" alt="Profile" />
+                    <img src={`${process.env.REACT_APP_API_DOMAIN}${studentData.photograph_path}`} width="100" alt="Profile" />
                 </div>
             } */}
 

@@ -79,28 +79,22 @@ const Employee = () => {
                 formData.append("photograph", photograph);
 
             // Send the request
-            const res = await axios.post("/students", formData, {
+            await axios.post("/students", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     "Authorization": "Bearer " + jwtToken
                 }
             });
 
-            const data: {
-                "student_id": string,
-                "roll_number": string,
-                "first_name": string,
-                "last_name": string,
-                "email": string,
-                "photograph_path": string,
-                "domain": number
-            } = res.data;
-
-            setSuccessMessage("Student admitted successfully");
+            setSuccessMessage("Student admitted successfully!");
             setErrorMessage("");
             fetchStudentList();
-        } catch (error) {
-            setErrorMessage("Error while admitting student");
+        } catch (error: any) {
+            if(error.status === 400)
+                setErrorMessage("Invalid data enetered");
+            else
+                setErrorMessage("Something went wrong");
+
             setSuccessMessage("");
         }
         setIsLoadingAdmit(false);
@@ -127,6 +121,8 @@ const Employee = () => {
 
     useEffect(() => {
         fetchStudentList();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     
     // =================================================

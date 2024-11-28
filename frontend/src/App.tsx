@@ -64,7 +64,7 @@ const router = createBrowserRouter([
 );
 
 function App() {
-	axios.defaults.baseURL = "http://localhost:8080/api/v1";
+	axios.defaults.baseURL = `${process.env.REACT_APP_API_DOMAIN}${process.env.REACT_APP_API_PATH}`;
 
 	const primeReactConfig = {
 		ripple: true,
