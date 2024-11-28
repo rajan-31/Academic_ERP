@@ -5,6 +5,7 @@ import org.myprojects.academic_erp.dto.LoginRequest;
 import org.myprojects.academic_erp.dto.LoginResponse;
 import org.myprojects.academic_erp.entity.UserCredentials;
 import org.myprojects.academic_erp.exception.InvalidCredentialsException;
+import org.myprojects.academic_erp.exception.ResourceConflictException;
 import org.myprojects.academic_erp.helper.EncryptionService;
 import org.myprojects.academic_erp.helper.JWTHelper;
 import org.myprojects.academic_erp.mapper.UserCredentialsMapper;
@@ -28,7 +29,7 @@ public class AuthorizationService {
 
     public String createUserCredentials(LoginRequest request) {
         if(userCredentialsRepo.findByEmail(request.email()).isPresent()) {
-            throw new InvalidCredentialsException("User already exists");
+            throw new ResourceConflictException("User already exists");
         }
 
         UserCredentials userCredentials = userCredentialsMapper.toUserCredentials(request);
