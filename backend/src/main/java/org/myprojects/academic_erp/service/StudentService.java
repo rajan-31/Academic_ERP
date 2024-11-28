@@ -9,6 +9,7 @@ import org.myprojects.academic_erp.dto.StudentModificationRequest;
 import org.myprojects.academic_erp.dto.StudentResponse;
 import org.myprojects.academic_erp.entity.*;
 import org.myprojects.academic_erp.exception.AccessDeniedException;
+import org.myprojects.academic_erp.exception.InvalidCredentialsException;
 import org.myprojects.academic_erp.exception.StudentDataInvalidException;
 import org.myprojects.academic_erp.exception.StudentNotFoundException;
 import org.myprojects.academic_erp.helper.EncryptionService;
@@ -129,7 +130,7 @@ public class StudentService {
 
         // Handle cases where attempts exceed limits
         if (attempt == 100) {
-            throw new IllegalStateException("Unable to generate a unique email after 100 attempts");
+            throw new RuntimeException("Unable to generate a unique email after 100 attempts");
         }
 
         return uniqueEmail;
@@ -140,7 +141,7 @@ public class StudentService {
     ) {
         // To generate roll number, construct Student
         Domain domain = domainRepo.findById(request.domain())
-                .orElseThrow(() -> new IllegalArgumentException(
+                .orElseThrow(() -> new StudentDataInvalidException(
                         "Invalid domain ID: " + request.domain())
                 );
 
@@ -178,7 +179,7 @@ public class StudentService {
                 ));
 
         if(!loggedInUserType.equals("employee") && !loggedInEmail.equals(existingStudent.getEmail())) {
-            throw new AccessDeniedException("Unauthorized user");
+            throw new InvalidCredentialsException("Unauthorized user");
         }
 
         Domain domain = request != null && request.domain() != null ?
@@ -242,7 +243,7 @@ public class StudentService {
         );
 
         if(!loggedInUserType.equals("employee") && !loggedInEmail.equals(student.getEmail())) {
-            throw new AccessDeniedException("Unauthorized user");
+            throw new InvalidCredentialsException("Unauthorized user");
         }
 
         // delete photo

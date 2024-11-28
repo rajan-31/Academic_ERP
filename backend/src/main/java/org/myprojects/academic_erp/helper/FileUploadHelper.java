@@ -17,7 +17,7 @@ public class FileUploadHelper {
             File uploadDir = new File(UPLOAD_DIR+IMAGE_UPLOAD_PATH);
             if (!uploadDir.exists()) {
                 if(!uploadDir.mkdirs())
-                    throw new IOException("Unable to create directory");
+                    throw new RuntimeException("Unable to create directory");
             }
 
             String fileExtension = Objects.requireNonNull(
