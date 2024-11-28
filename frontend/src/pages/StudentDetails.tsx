@@ -110,7 +110,7 @@ const StudentDetails = () => {
             if(lastName && lastName.trim() !== studentData?.last_name) jsonData.last_name = lastName;
             if(domain && domain !== studentData?.domain) jsonData.domain = String(domain);
             if(emailModify) jsonData.email_modify = true;
-            if(rollNumberModify) jsonData.email_modify = true;
+            if(rollNumberModify) jsonData.roll_number_modify = true;
             if(cgpa && cgpa !== studentData?.cgpa) jsonData.cgpa = String(cgpa);
             if(totalCredits && totalCredits !== studentData?.total_credits) jsonData.total_credits = String(totalCredits);
             if(graduationYear && graduationYear !== studentData?.graduation_year) jsonData.graduation_year = String(graduationYear);
@@ -255,6 +255,7 @@ const StudentDetails = () => {
                                 <label htmlFor="roll_number_modify">Assign New Roll Number</label>
                             </div>
                         </div>
+
                         <div className="flex-1 flex-col">
                             <div className="flex flex-column gap-2 mb-3">
                                 <label htmlFor="email" className="font-bold">Email</label>
